@@ -8,28 +8,13 @@ const mysql = require('mysql2/promise');
 const db = mysql.createPool({
   host: '127.0.0.1',
   user: 'buxbtreu_ssuser',
-  password: 'YOUR_DB_PASSWORD_HERE',
+  password: 'YOUR_DB_PASSWORD',
   database: 'buxbtreu_spinspring',
   port: 3306
 });
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-
-// ============ LEGACY PREFIX COMPAT (/spinspg/* -> /*) ============
-// Views and deployed links historically use /spinspg/* (sub-app mount).
-// This standalone domain serves canonical routes at /.
-// Strip a single leading /spinspg prefix so BOTH work:
-//   /login  <->  /spinspg/login
-//   /attendant-login  <->  /spinspg/attendant-login
-//   /customer-login   <->  /spinspg/customer-login
-// Placed before static + routes so pages AND static assets alias correctly.
-app.use((req, res, next) => {
-  if (req.url === '/spinspg' || req.url.startsWith('/spinspg/')) {
-    req.url = req.url.slice('/spinspg'.length) || '/';
-  }
-  next();
-});
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -44,6 +29,7 @@ app.use((req, res, next) => {
   next();
 });
 
+// Auth middleware
 function isAuth(req, res, next) {
   if (req.session.spinUser) return next();
   req.flash('error_msg', 'Please login first');
@@ -84,15 +70,18 @@ app.post('/login', async (req, res) => {
     const { email, password } = req.body;
     const bcrypt = require('bcryptjs');
     const [users] = await db.query('SELECT * FROM ss_users WHERE email = ? AND is_active = 1', [email]);
+    
     if (users.length === 0) {
       req.flash('error_msg', 'Invalid credentials');
       return res.redirect('/login');
     }
+    
     const match = await bcrypt.compare(password, users[0].password);
     if (!match) {
       req.flash('error_msg', 'Invalid credentials');
       return res.redirect('/login');
     }
+    
     req.session.spinUser = {
       id: users[0].id,
       email: users[0].email,
@@ -100,6 +89,7 @@ app.post('/login', async (req, res) => {
       business: users[0].business_name,
       role: users[0].role || 'owner'
     };
+    
     if (users[0].role === 'owner') res.redirect('/owner');
     else if (users[0].role === 'attendant') res.redirect('/attendant');
     else res.redirect('/customer');
@@ -109,26 +99,34 @@ app.post('/login', async (req, res) => {
   }
 });
 
+// Owner Dashboard
 app.get('/owner', isOwner, async (req, res) => {
   try {
     const userId = req.session.spinUser.id;
     const [devices] = await db.query('SELECT * FROM ss_devices WHERE owner_id = ?', [userId]);
     const [attendants] = await db.query('SELECT * FROM ss_attendants WHERE owner_id = ?', [userId]);
     const [customers] = await db.query('SELECT * FROM ss_customers WHERE owner_id = ?', [userId]);
-    const [stats] = await db.query('SELECT SUM(today_revenue) as today_rev, SUM(total_revenue) as total_rev, SUM(cycles_completed) as total_cyc FROM ss_devices WHERE owner_id = ?', [userId]);
+    const [stats] = await db.query(
+      'SELECT SUM(today_revenue) as today_rev, SUM(total_revenue) as total_rev, SUM(today_cycles) as today_cyc, SUM(cycles_completed) as total_cyc FROM ss_devices WHERE owner_id = ?',
+      [userId]
+    );
     res.render('spinspring/owner-dashboard', {
       title: 'Owner Panel - SpinSpring',
-      devices, attendants, customers, stats: stats[0],
+      devices, attendants, customers,
+      stats: stats[0],
       user: req.session.spinUser
     });
   } catch(err) {
     res.render('spinspring/owner-dashboard', {
-      title: 'Owner Panel', devices: [], attendants: [], customers: [], stats: {},
+      title: 'Owner Panel',
+      devices: [], attendants: [], customers: [],
+      stats: {},
       user: req.session.spinUser
     });
   }
 });
 
+// Register Device
 app.get('/register-device', isOwner, (req, res) => {
   res.render('spinspring/register-device', { title: 'Register Machine - SpinSpring' });
 });
@@ -137,12 +135,11 @@ app.post('/register-device', isOwner, async (req, res) => {
   try {
     const crypto = require('crypto');
     const { device_name, device_type, location, price_per_cycle } = req.body;
-    const userId = req.session.spinUser.id;
     const deviceId = 'SPIN-' + Date.now().toString(36).toUpperCase() + '-' + crypto.randomBytes(3).toString('hex').toUpperCase();
     const apiKey = 'SS-' + crypto.randomBytes(16).toString('hex');
     await db.query(
       "INSERT INTO ss_devices (device_id, device_name, device_type, api_key, owner_id, location_area, price_per_cycle, status) VALUES (?, ?, ?, ?, ?, ?, ?, 'offline')",
-      [deviceId, device_name, device_type, apiKey, userId, location, price_per_cycle || 300]
+      [deviceId, device_name, device_type, apiKey, req.session.spinUser.id, location, price_per_cycle || 300]
     );
     req.flash('success_msg', 'Machine registered!');
     res.redirect('/owner');
@@ -152,6 +149,7 @@ app.post('/register-device', isOwner, async (req, res) => {
   }
 });
 
+// Create Attendant
 app.post('/owner/attendants', isOwner, async (req, res) => {
   try {
     const { full_name, email, phone, pin_code } = req.body;
@@ -170,6 +168,7 @@ app.post('/owner/attendants', isOwner, async (req, res) => {
   }
 });
 
+// Create Customer
 app.post('/owner/customers', isOwner, async (req, res) => {
   try {
     const { full_name, phone, email } = req.body;
@@ -211,12 +210,16 @@ app.post('/attendant-login', async (req, res) => {
   }
 });
 
+// Attendant Dashboard
 app.get('/attendant', isAttendant, async (req, res) => {
   try {
     const ownerId = req.session.spinUser.ownerId || req.session.spinUser.id;
     const [devices] = await db.query('SELECT * FROM ss_devices WHERE owner_id = ?', [ownerId]);
     const [customers] = await db.query('SELECT * FROM ss_customers WHERE owner_id = ? AND is_active = 1', [ownerId]);
-    const [activeOrders] = await db.query("SELECT * FROM ss_orders WHERE user_id = ? AND order_status IN ('queued', 'in_progress')", [ownerId]);
+    const [activeOrders] = await db.query(
+      "SELECT * FROM ss_orders WHERE user_id = ? AND order_status IN ('queued', 'in_progress') ORDER BY created_at DESC",
+      [ownerId]
+    );
     res.render('spinspring/attendant-dashboard', {
       title: 'Attendant Panel - SpinSpring',
       devices, customers, activeOrders,
@@ -224,12 +227,14 @@ app.get('/attendant', isAttendant, async (req, res) => {
     });
   } catch(err) {
     res.render('spinspring/attendant-dashboard', {
-      title: 'Attendant Panel', devices: [], customers: [], activeOrders: [],
+      title: 'Attendant Panel',
+      devices: [], customers: [], activeOrders: [],
       user: req.session.spinUser
     });
   }
 });
 
+// Attendant: Create Order
 app.post('/attendant/orders', isAttendant, async (req, res) => {
   try {
     const { device_id, customer_id, service_type, cycle_type, price } = req.body;
@@ -273,12 +278,16 @@ app.post('/customer-login', async (req, res) => {
   }
 });
 
+// Customer Dashboard
 app.get('/customer', isCustomer, async (req, res) => {
   try {
     const customerId = req.session.spinUser.customerId;
     const [customerData] = await db.query('SELECT * FROM ss_customers WHERE customer_unique_id = ?', [customerId]);
     const [orders] = await db.query('SELECT * FROM ss_orders WHERE customer_name = ? ORDER BY created_at DESC LIMIT 20', [customerId]);
-    const [activeOrders] = await db.query("SELECT * FROM ss_orders WHERE customer_name = ? AND order_status IN ('queued', 'in_progress')", [customerId]);
+    const [activeOrders] = await db.query(
+      "SELECT * FROM ss_orders WHERE customer_name = ? AND order_status IN ('queued', 'in_progress')",
+      [customerId]
+    );
     res.render('spinspring/customer-dashboard', {
       title: 'My Account - SpinSpring',
       customer: customerData[0] || {},
@@ -287,7 +296,8 @@ app.get('/customer', isCustomer, async (req, res) => {
     });
   } catch(err) {
     res.render('spinspring/customer-dashboard', {
-      title: 'My Account', customer: {}, orders: [], activeOrders: [],
+      title: 'My Account',
+      customer: {}, orders: [], activeOrders: [],
       user: req.session.spinUser
     });
   }
@@ -305,19 +315,43 @@ app.post('/api/sync', async (req, res) => {
     const deviceId = req.headers['x-device-id'];
     const apiKey = req.headers['x-api-key'];
     if (!deviceId || !apiKey) return res.status(401).json({ error: 'Missing credentials' });
+    
     const [devices] = await db.query('SELECT * FROM ss_devices WHERE device_id = ? AND api_key = ?', [deviceId, apiKey]);
     if (devices.length === 0) return res.status(401).json({ error: 'Invalid credentials' });
+    
     const data = req.body;
     await db.query(
-      `UPDATE ss_devices SET status = ?, current_cycle = ?, cycle_progress = ?, cycles_completed = ?, today_revenue = ?, total_revenue = ?, last_sync = NOW() WHERE device_id = ?`,
-      [data.status || 'idle', data.current_cycle || null, data.cycle_progress || 0, data.cycles_completed || 0, data.today_revenue || 0, data.total_revenue || 0, deviceId]
+      `UPDATE ss_devices SET status = ?, current_cycle = ?, cycle_progress = ?, water_temp = ?, water_level = ?, door_locked = ?, cycles_completed = ?, today_revenue = ?, total_revenue = ?, today_cycles = ?, last_sync = NOW() WHERE device_id = ?`,
+      [
+        data.status || 'idle',
+        data.current_cycle || null,
+        data.cycle_progress || 0,
+        data.water_temp || 0,
+        data.water_level || 0,
+        data.door_locked ? 1 : 0,
+        data.cycles_completed || 0,
+        data.today_revenue || 0,
+        data.total_revenue || 0,
+        data.today_cycles || 0,
+        deviceId
+      ]
     );
-    const [commands] = await db.query("SELECT * FROM ss_commands WHERE device_id = ? AND status = 'pending' LIMIT 5", [deviceId]);
+    
+    const [commands] = await db.query(
+      "SELECT * FROM ss_commands WHERE device_id = ? AND status = 'pending' LIMIT 5",
+      [deviceId]
+    );
+    
     if (commands.length > 0) {
       const ids = commands.map(c => c.id);
       await db.query("UPDATE ss_commands SET status = 'sent' WHERE id IN (?)", [ids]);
     }
-    res.json({ status: 'success', commands: commands.map(c => ({ type: c.command_type, value: c.command_value })) });
+    
+    res.json({
+      status: 'success',
+      commands: commands.map(c => ({ type: c.command_type, value: c.command_value })),
+      current_price: devices[0].price_per_cycle
+    });
   } catch(err) {
     res.status(500).json({ error: 'Sync failed' });
   }
@@ -338,5 +372,8 @@ app.use((req, res) => {
   res.status(404).send('<h1>404 - Not Found</h1><a href="/">Home</a>');
 });
 
+// ============ START ============
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, '0.0.0.0', () => console.log('SpinSpring Express running on port ' + PORT));
+app.listen(PORT, '0.0.0.0', () => {
+  console.log('SpinSpring Express running on port ' + PORT);
+});
