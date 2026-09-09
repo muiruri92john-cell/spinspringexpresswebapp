@@ -1,0 +1,36 @@
+<nav class="ss-nav">
+  <div class="container d-flex justify-content-between align-items-center">
+    <a href="/spinspg/dashboard" class="brand text-white text-decoration-none">
+      <i class="fas fa-soap me-2"></i>SpinSpring
+    </a>
+    <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#ssNav">
+      <span class="navbar-toggler-icon" style="filter:invert(1);"></span>
+    </button>
+    <div class="d-none d-lg-flex align-items-center gap-2" id="ssNav">
+      <a href="/spinspg/dashboard" class="btn btn-sm btn-outline-light rounded-pill">Dashboard</a>
+      <a href="/spinspg/orders" class="btn btn-sm btn-outline-light rounded-pill">Orders</a>
+      <a href="/spinspg/reports" class="btn btn-sm btn-outline-light rounded-pill">Reports</a>
+      <a href="/spinspg/settings" class="btn btn-sm btn-outline-light rounded-pill">Settings</a>
+      <a href="/spinspg/register-device" class="btn btn-sm btn-light rounded-pill">
+        <i class="fas fa-plus me-1"></i> Add Machine
+      </a>
+      <span class="text-white ms-2">
+        <i class="fas fa-user-circle me-1"></i>
+        <%= typeof user !== 'undefined' && user ? (user.name || user.email) : 'User' %>
+      </span>
+      <a href="/spinspg/logout" class="btn btn-sm btn-danger rounded-pill">Logout</a>
+    </div>
+  </div>
+  
+  <!-- Mobile Nav -->
+  <div class="container d-lg-none mt-2">
+    <div class="d-flex flex-wrap gap-1">
+      <a href="/spinspg/dashboard" class="btn btn-sm btn-outline-light rounded-pill">Dashboard</a>
+      <a href="/spinspg/orders" class="btn btn-sm btn-outline-light rounded-pill">Orders</a>
+      <a href="/spinspg/reports" class="btn btn-sm btn-outline-light rounded-pill">Reports</a>
+      <a href="/spinspg/settings" class="btn btn-sm btn-outline-light rounded-pill">Settings</a>
+      <a href="/spinspg/register-device" class="btn btn-sm btn-light rounded-pill">+ Machine</a>
+      <a href="/spinspg/logout" class="btn btn-sm btn-danger rounded-pill">Logout</a>
+    </div>
+  </div>
+</nav>

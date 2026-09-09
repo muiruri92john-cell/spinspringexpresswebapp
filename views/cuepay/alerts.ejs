@@ -1,0 +1,54 @@
+<%- include('../../layouts/main') %>
+<style>
+.cuepay-nav { background: linear-gradient(135deg, #0ea5e9, #0284c7); padding: 15px 0; }
+.cuepay-nav a { color: white !important; text-decoration: none; }
+.alert-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-radius: 10px; margin-bottom: 10px; background: #f8fafc; }
+.alert-item.disabled { opacity: 0.5; }
+.toggle-switch { position: relative; width: 50px; height: 28px; display: inline-block; }
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #ccc; border-radius: 28px; transition: 0.3s; }
+.toggle-slider:before { content: ""; position: absolute; height: 22px; width: 22px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.3s; }
+input:checked + .toggle-slider { background: #10b981; }
+input:checked + .toggle-slider:before { transform: translateX(22px); }
+</style>
+</head>
+<body>
+<nav class="cuepay-nav">
+  <div class="container">
+    <a href="/cuepay/dashboard"><i class="fas fa-arrow-left me-2"></i> Back to Dashboard</a>
+  </div>
+</nav>
+
+<div class="container py-4">
+  <h2 class="mb-4">Alert Settings</h2>
+
+  <% alerts.forEach(function(alert) { %>
+    <div class="alert-item <%= alert.is_enabled ? '' : 'disabled' %>">
+      <div>
+        <strong><%= alert.alert_type.replace('_', ' ') %></strong>
+        <br><small class="text-muted">Threshold: <%= alert.threshold_value %></small>
+      </div>
+      <form action="/cuepay/alerts/toggle/<%= alert.id %>" method="POST">
+        <button type="submit" class="toggle-switch">
+          <input type="checkbox" <%= alert.is_enabled ? 'checked' : '' %> onchange="this.form.submit()">
+          <span class="toggle-slider"></span>
+        </button>
+      </form>
+    </div>
+  <% }) %>
+
+  <h4 class="mt-4">Recent Alert History</h4>
+  <% if (history.length > 0) { %>
+    <% history.forEach(function(h) { %>
+      <div class="alert alert-<%= h.is_read ? 'light' : 'warning' %>">
+        <small><%= new Date(h.created_at).toLocaleString() %></small>
+        <p class="mb-0"><%= h.message %></p>
+      </div>
+    <% }) %>
+  <% } else { %>
+    <p class="text-muted">No alerts triggered yet.</p>
+  <% } %>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

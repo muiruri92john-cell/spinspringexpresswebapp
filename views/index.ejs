@@ -1,0 +1,616 @@
+<%- include('layouts/main') %>
+<style>
+:root {
+  --bg-dark: #0f0f1a;
+  --bg-card: #1a1a2e;
+  --bg-card-hover: #222240;
+  --text-primary: #e0e0e0;
+  --text-muted: #8888aa;
+  --accent: #00d4ff;
+  --accent-dark: #0099cc;
+  --border: #2a2a4a;
+}
+
+body { background: var(--bg-dark); }
+
+/* Hero Slideshow */
+.hero-slideshow {
+  position: relative;
+  height: 550px;
+  overflow: hidden;
+  background: #0a0a14;
+}
+.hero-slide {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 1.2s ease-in-out;
+  filter: brightness(1.0) saturate(0.8);
+}
+.hero-slide.active { opacity: 1; }
+.hero-overlay {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: linear-gradient(135deg, rgba(15,15,26,0.85) 0%, rgba(26,26,46,0.7) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  z-index: 2;
+}
+.hero-content h1 {
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: #ffffff;
+  text-shadow: 0 0 40px rgba(0,212,255,0.3);
+  margin-bottom: 10px;
+  letter-spacing: -1px;
+}
+.hero-content .slogan {
+  font-size: 1.4rem;
+  color: var(--accent);
+  margin-bottom: 15px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+.hero-content .subtitle {
+  font-size: 1.1rem;
+  color: #9999bb;
+  margin-bottom: 35px;
+}
+
+/* Buttons */
+.btn-primary-dark {
+  background: var(--accent);
+  color: #0a0a14;
+  padding: 14px 35px;
+  border-radius: 50px;
+  font-weight: 700;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.3s;
+  border: none;
+  letter-spacing: 1px;
+}
+.btn-primary-dark:hover {
+  background: #00e5ff;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(0,212,255,0.3);
+  color: #0a0a14;
+}
+.btn-outline-dark {
+  border: 2px solid #444466;
+  color: #ccccdd;
+  padding: 14px 35px;
+  border-radius: 50px;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.3s;
+  letter-spacing: 1px;
+}
+.btn-outline-dark:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-3px);
+}
+
+/* Section */
+.section { padding: 70px 0; }
+.section-alt { background: #0d0d1f; }
+.section-title h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #ffffff;
+  text-align: center;
+  margin-bottom: 15px;
+}
+.section-title p {
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* Slider Dots */
+.slider-dots {
+  position: absolute;
+  bottom: 25px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  display: flex;
+  gap: 12px;
+}
+.slider-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.3);
+  cursor: pointer;
+  transition: all 0.3s;
+  border: 2px solid transparent;
+}
+.slider-dot.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 10px rgba(0,212,255,0.5);
+}
+
+/* Product Cards */
+.card-dark {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.3s;
+  cursor: pointer;
+  height: 100%;
+}
+.card-dark:hover {
+  background: var(--bg-card-hover);
+  border-color: #3a3a6a;
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+}
+.card-dark img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  filter: brightness(0.8);
+}
+.card-dark .card-body { padding: 18px; }
+.card-dark .card-title { color: #ffffff; font-weight: 600; margin-bottom: 8px; font-size: 1rem; }
+.card-dark .card-price { color: var(--accent); font-weight: 700; font-size: 1.2rem; }
+.card-dark .card-category { color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; }
+
+/* Category Cards */
+.category-card-dark {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 35px 20px;
+  text-align: center;
+  transition: all 0.3s;
+  text-decoration: none;
+  display: block;
+}
+.category-card-dark:hover {
+  background: #1e1e40;
+  border-color: var(--accent);
+  transform: translateY(-5px);
+}
+.category-card-dark i { font-size: 2.5rem; color: var(--accent); margin-bottom: 15px; }
+.category-card-dark h5 { color: #ffffff; margin-bottom: 5px; }
+.category-card-dark p { color: var(--text-muted); margin: 0; font-size: 0.9rem; }
+
+/* Tech Icon Cards */
+.tech-icon-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  padding: 25px 15px;
+  transition: all 0.3s;
+  text-align: center;
+}
+.tech-icon-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--accent) !important;
+  box-shadow: 0 15px 40px rgba(0,212,255,0.15);
+  cursor: pointer;
+}
+
+/* Stat Counter */
+.stat-counter i { transition: transform 0.3s; }
+.stat-counter:hover i { transform: scale(1.2); }
+
+/* Step Cards */
+.step-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 30px;
+  text-align: center;
+  position: relative;
+  transition: all 0.3s;
+}
+.step-card:hover { border-color: var(--accent); transform: translateY(-5px); }
+.step-number {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0a0a14;
+  font-weight: 800;
+}
+
+/* CuePay & Discord Sections */
+.cuepay-section {
+  background: linear-gradient(135deg, #0a1628 0%, #0f1f3a 100%);
+  border-top: 1px solid #1a3355;
+  border-bottom: 1px solid #1a3355;
+}
+.discord-section {
+  background: linear-gradient(135deg, #1a1a3e 0%, #252550 100%);
+  border-top: 1px solid #333366;
+}
+
+/* Badge */
+.badge-dark {
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  display: inline-block;
+}
+.badge-completed { background: rgba(16,185,129,0.2); color: #10b981; border: 1px solid rgba(16,185,129,0.3); }
+.badge-progress { background: rgba(245,158,11,0.2); color: #f59e0b; border: 1px solid rgba(245,158,11,0.3); }
+
+@media (max-width: 768px) {
+  .hero-slideshow { height: 400px; }
+  .hero-content h1 { font-size: 2.2rem; }
+  .hero-content .slogan { font-size: 1rem; }
+  .section { padding: 40px 0; }
+}
+</style>
+</head>
+<body style="background:#0f0f1a;">
+<%- include('partials/header') %>
+
+<!-- ==================== HERO SLIDESHOW ==================== -->
+<div class="hero-slideshow">
+  <img src="/images/slides/slide1.jpg" class="hero-slide active" alt="Ardthon Solutions" onerror="this.style.display='none'">
+  <img src="/images/slides/slide2.jpg" class="hero-slide" alt="Programmable Boards" onerror="this.style.display='none'">
+  <img src="/images/slides/slide3.jpg" class="hero-slide" alt="IoT Sensors" onerror="this.style.display='none'">
+  <img src="/images/slides/slide4.jpg" class="hero-slide" alt="CuePay Automation" onerror="this.style.display='none'">
+
+  <div class="hero-overlay">
+    <div class="hero-content">
+      <h1>Ardthon Solutions</h1>
+      <div class="slogan">Connect with Ease</div>
+      <p class="subtitle">Programmable Boards • Sensors • Arduino • ESP32 • IoT Solutions</p>
+      <div>
+        <a href="/products" class="btn-primary-dark me-3">Shop Now</a>
+        <a href="/projects" class="btn-outline-dark">View Projects</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="slider-dots">
+    <span class="slider-dot active" onclick="goToSlide(0)"></span>
+    <span class="slider-dot" onclick="goToSlide(1)"></span>
+    <span class="slider-dot" onclick="goToSlide(2)"></span>
+    <span class="slider-dot" onclick="goToSlide(3)"></span>
+  </div>
+</div>
+
+<!-- ==================== LIVE STATS COUNTER ==================== -->
+<section style="background:var(--bg-card);border-bottom:1px solid var(--border);padding:30px 0;">
+  <div class="container">
+    <div class="row text-center">
+      <div class="col-md-3 mb-3">
+        <div class="stat-counter">
+          <i class="fas fa-microchip fa-2x mb-2" style="color:var(--accent);"></i>
+          <div class="counter-value" data-target="5000" style="font-size:2rem;font-weight:800;color:#ffffff;">0</div>
+          <div style="color:var(--text-muted);font-size:0.85rem;">Products Sold</div>
+        </div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <div class="stat-counter">
+          <i class="fas fa-project-diagram fa-2x mb-2" style="color:#10b981;"></i>
+          <div class="counter-value" data-target="50" style="font-size:2rem;font-weight:800;color:#ffffff;">0</div>
+          <div style="color:var(--text-muted);font-size:0.85rem;">Projects Delivered</div>
+        </div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <div class="stat-counter">
+          <i class="fas fa-users fa-2x mb-2" style="color:#f59e0b;"></i>
+          <div class="counter-value" data-target="1200" style="font-size:2rem;font-weight:800;color:#ffffff;">0</div>
+          <div style="color:var(--text-muted);font-size:0.85rem;">Happy Clients</div>
+        </div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <div class="stat-counter">
+          <i class="fas fa-globe-africa fa-2x mb-2" style="color:#8b5cf6;"></i>
+          <div class="counter-value" data-target="15" style="font-size:2rem;font-weight:800;color:#ffffff;">0</div>
+          <div style="color:var(--text-muted);font-size:0.85rem;">Countries Reached</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== FEATURED PRODUCTS ==================== -->
+<% if (typeof featuredProducts !== 'undefined' && featuredProducts && featuredProducts.length > 0) { %>
+<section class="section">
+  <div class="container">
+    <div class="section-title">
+      <h2>Featured Products</h2>
+      <p>High-quality boards and sensors for your projects</p>
+    </div>
+    <div class="row g-4">
+      <% featuredProducts.forEach(function(product) { %>
+        <div class="col-md-3">
+          <div class="card-dark" onclick="window.location='/products/<%= product.slug %>'">
+            <% if (product.images && product.images[0] && product.images[0].url) { %>
+              <img src="<%= product.images[0].url %>" alt="<%= product.name %>" onerror="this.style.display='none'">
+            <% } else { %>
+              <div style="height:220px;background:#1a1a2e;display:flex;align-items:center;justify-content:center;">
+                <i class="fas fa-microchip fa-3x" style="color:#333366;"></i>
+              </div>
+            <% } %>
+            <div class="card-body">
+              <div class="card-category"><%= product.category %></div>
+              <div class="card-title"><%= product.name %></div>
+              <div class="card-price">$<%= product.price %></div>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+    <div class="text-center mt-4">
+      <a href="/products" class="btn-outline-dark">View All Products →</a>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<!-- ==================== SHOP BY CATEGORY ==================== -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-title"><h2>Shop by Category</h2></div>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <a href="/products?category=Programmable Boards" class="category-card-dark">
+          <i class="fas fa-microchip"></i>
+          <h5>Programmable Boards</h5>
+          <p>Arduino, ESP32, Raspberry Pi</p>
+        </a>
+      </div>
+      <div class="col-md-4">
+        <a href="/products?category=Sensors" class="category-card-dark">
+          <i class="fas fa-thermometer-half"></i>
+          <h5>Sensors & Modules</h5>
+          <p>Temperature, Motion, Distance</p>
+        </a>
+      </div>
+      <div class="col-md-4">
+        <a href="/products?category=Kits" class="category-card-dark">
+          <i class="fas fa-box-open"></i>
+          <h5>Starter Kits</h5>
+          <p>Complete kits for all levels</p>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== TECH STACK SHOWCASE ==================== -->
+<section class="section">
+  <div class="container">
+    <div class="section-title"><h2>Technologies We Work With</h2></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:20px;text-align:center;">
+      <div class="tech-icon-card">
+        <i class="fas fa-microchip fa-3x mb-3" style="color:#00979D;"></i>
+        <div style="color:#ffffff;font-weight:600;">Arduino</div>
+        <div style="color:var(--text-muted);font-size:0.75rem;">ATmega328P</div>
+      </div>
+      <div class="tech-icon-card">
+        <i class="fas fa-wifi fa-3x mb-3" style="color:#E7352C;"></i>
+        <div style="color:#ffffff;font-weight:600;">ESP32</div>
+        <div style="color:var(--text-muted);font-size:0.75rem;">Dual Core</div>
+      </div>
+      <div class="tech-icon-card">
+        <i class="fab fa-python fa-3x mb-3" style="color:#3776AB;"></i>
+        <div style="color:#ffffff;font-weight:600;">Python</div>
+        <div style="color:var(--text-muted);font-size:0.75rem;">AI/ML</div>
+      </div>
+      <div class="tech-icon-card">
+        <i class="fab fa-node-js fa-3x mb-3" style="color:#339933;"></i>
+        <div style="color:#ffffff;font-weight:600;">Node.js</div>
+        <div style="color:var(--text-muted);font-size:0.75rem;">Backend</div>
+      </div>
+      <div class="tech-icon-card">
+        <i class="fas fa-database fa-3x mb-3" style="color:#4479A1;"></i>
+        <div style="color:#ffffff;font-weight:600;">MySQL</div>
+        <div style="color:var(--text-muted);font-size:0.75rem;">Database</div>
+      </div>
+      <div class="tech-icon-card">
+        <i class="fas fa-mobile-alt fa-3x mb-3" style="color:#00d4ff;"></i>
+        <div style="color:#ffffff;font-weight:600;">IoT</div>
+        <div style="color:var(--text-muted);font-size:0.75rem;">MQTT/HTTP</div>
+      </div>
+      <div class="tech-icon-card">
+        <i class="fas fa-cloud fa-3x mb-3" style="color:#8b5cf6;"></i>
+        <div style="color:#ffffff;font-weight:600;">Cloud</div>
+        <div style="color:var(--text-muted);font-size:0.75rem;">AWS/GCP</div>
+      </div>
+      <div class="tech-icon-card">
+        <i class="fas fa-robot fa-3x mb-3" style="color:#f59e0b;"></i>
+        <div style="color:#ffffff;font-weight:600;">Robotics</div>
+        <div style="color:var(--text-muted);font-size:0.75rem;">Servo/Motor</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== LATEST PROJECTS ==================== -->
+<% if (typeof latestProjects !== 'undefined' && latestProjects && latestProjects.length > 0) { %>
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-title"><h2>Latest Projects</h2></div>
+    <div class="row g-4">
+      <% latestProjects.forEach(function(project) { %>
+        <div class="col-md-4">
+          <div class="card-dark" onclick="window.location='/projects/<%= project.slug %>'">
+            <% if (project.images && project.images[0] && project.images[0].url) { %>
+              <img src="<%= project.images[0].url %>" alt="<%= project.title %>" onerror="this.style.display='none'">
+            <% } else { %>
+              <div style="height:200px;background:#1a1a2e;display:flex;align-items:center;justify-content:center;">
+                <i class="fas fa-project-diagram fa-3x" style="color:#333366;"></i>
+              </div>
+            <% } %>
+            <div class="card-body">
+              <span class="badge-dark <%= project.status === 'Completed' ? 'badge-completed' : 'badge-progress' %> mb-2"><%= project.status %></span>
+              <div class="card-title"><%= project.title %></div>
+              <div class="card-category"><%= project.field %></div>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<!-- ==================== HOW WE DELIVER ==================== -->
+<section class="section">
+  <div class="container">
+    <div class="section-title"><h2>How We Deliver</h2></div>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="step-card">
+          <div class="step-number" style="background:var(--accent);">1</div>
+          <i class="fas fa-comments fa-3x mb-3 mt-3" style="color:var(--accent);"></i>
+          <h5 style="color:#ffffff;">Consultation</h5>
+          <p style="color:var(--text-muted);font-size:0.9rem;">We analyze your requirements and design the optimal hardware + software solution for your needs</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="step-card">
+          <div class="step-number" style="background:#10b981;">2</div>
+          <i class="fas fa-code fa-3x mb-3 mt-3" style="color:#10b981;"></i>
+          <h5 style="color:#ffffff;">Development</h5>
+          <p style="color:var(--text-muted);font-size:0.9rem;">Our engineers build, test, and deploy your custom embedded system with cloud dashboard integration</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="step-card">
+          <div class="step-number" style="background:#f59e0b;">3</div>
+          <i class="fas fa-rocket fa-3x mb-3 mt-3" style="color:#f59e0b;"></i>
+          <h5 style="color:#ffffff;">Deployment</h5>
+          <p style="color:var(--text-muted);font-size:0.9rem;">We install on-site, train your staff, and provide ongoing remote support and maintenance</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== TRUSTED BY INSTITUTIONS ==================== -->
+<section class="section section-alt">
+  <div class="container text-center">
+    <div class="section-title"><h2>Trusted By Institutions</h2></div>
+    <div style="display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:40px;opacity:0.6;">
+      <div style="color:var(--text-muted);font-size:1.1rem;font-weight:600;">
+        <i class="fas fa-hospital fa-2x mb-2 d-block" style="color:#ef4444;"></i>
+        Medical Engineering
+      </div>
+      <div style="color:var(--text-muted);font-size:1.1rem;font-weight:600;">
+        <i class="fas fa-bolt fa-2x mb-2 d-block" style="color:#f59e0b;"></i>
+        Electrical
+      </div>
+      <div style="color:var(--text-muted);font-size:1.1rem;font-weight:600;">
+        <i class="fas fa-laptop-code fa-2x mb-2 d-block" style="color:#3b82f6;"></i>
+        Computer Science
+      </div>
+      <div style="color:var(--text-muted);font-size:1.1rem;font-weight:600;">
+        <i class="fas fa-robot fa-2x mb-2 d-block" style="color:#8b5cf6;"></i>
+        Robotics
+      </div>
+      <div style="color:var(--text-muted);font-size:1.1rem;font-weight:600;">
+        <i class="fas fa-water fa-2x mb-2 d-block" style="color:#00d4ff;"></i>
+        Automation
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CUE PAY CTA ==================== -->
+<section class="cuepay-section section text-center">
+  <div class="container">
+    <i class="fas fa-water fa-4x mb-3" style="color:var(--accent);"></i>
+    <h2 style="color:#ffffff;">CuePay Pool Automation</h2>
+    <p style="color:#8899bb;font-size:1.1rem;margin-bottom:25px;">Monitor your pool tables remotely with real-time data and M-PESA payments</p>
+    <a href="/cuepay/login" class="btn-primary-dark">Access CuePay</a>
+  </div>
+</section>
+
+<!-- ==================== DISCORD CTA ==================== -->
+<section class="discord-section section text-center">
+  <div class="container">
+    <i class="fab fa-discord fa-4x mb-3" style="color:#5865F2;"></i>
+    <h2 style="color:#ffffff;">Join Our Discord Community</h2>
+    <p style="color:#9999bb;margin-bottom:25px;">Connect with makers, get support, and share your projects</p>
+    <a href="/discord" class="btn-outline-dark" style="border-color:#5865F2;color:#5865F2;">Join Community</a>
+  </div>
+</section>
+
+<%- include('partials/footer') %>
+<%- include('partials/whatsapp') %>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// Slideshow
+let currentSlide = 0;
+const slides = document.querySelectorAll('.hero-slide');
+const dots = document.querySelectorAll('.slider-dot');
+
+function showSlide(index) {
+  slides.forEach(s => s.classList.remove('active'));
+  dots.forEach(d => d.classList.remove('active'));
+  currentSlide = (index + slides.length) % slides.length;
+  slides[currentSlide].classList.add('active');
+  dots[currentSlide].classList.add('active');
+}
+function goToSlide(index) { showSlide(index); }
+setInterval(() => showSlide(currentSlide + 1), 5000);
+
+// Animated counters
+function animateCounters() {
+  document.querySelectorAll('.counter-value').forEach(counter => {
+    const target = parseInt(counter.getAttribute('data-target'));
+    const duration = 2000;
+    const step = target / (duration / 16);
+    let current = 0;
+    const updateCounter = () => {
+      current += step;
+      if (current < target) {
+        counter.textContent = Math.floor(current);
+        requestAnimationFrame(updateCounter);
+      } else {
+        counter.textContent = target;
+      }
+    };
+    updateCounter();
+  });
+}
+
+// Trigger counters when visible
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      animateCounters();
+      observer.disconnect();
+    }
+  });
+});
+document.querySelectorAll('.stat-counter').forEach(el => observer.observe(el));
+
+// Keyboard navigation
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'ArrowRight') showSlide(currentSlide + 1);
+  if (e.key === 'ArrowLeft') showSlide(currentSlide - 1);
+});
+</script>
+  <!-- PWA Script -->
+    <script src="/js/pwa.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

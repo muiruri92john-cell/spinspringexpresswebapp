@@ -1,0 +1,320 @@
+<%- include('layouts/main') %>
+<style>
+:root {
+  --bg-dark: #0f0f1a;
+  --bg-card: #1a1a2e;
+  --text-primary: #e0e0e0;
+  --text-muted: #8888aa;
+  --accent: #00d4ff;
+  --border: #2a2a4a;
+}
+
+body { background: var(--bg-dark); }
+
+.health-hero {
+  background: linear-gradient(135deg, #0a1628 0%, #0f1f3a 100%);
+  padding: 60px 0 40px;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+.health-hero h1 { color: #ffffff; font-size: 2.2rem; font-weight: 800; }
+.health-hero i { color: #ef4444; font-size: 3rem; margin-bottom: 15px; }
+
+.live-indicator {
+  display: inline-block;
+  width: 12px; height: 12px;
+  background: #10b981;
+  border-radius: 50%;
+  margin-right: 8px;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 5px #10b981; }
+  50% { opacity: 0.5; box-shadow: 0 0 15px #10b981; }
+}
+
+.vital-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 30px;
+  text-align: center;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+.vital-card:hover { border-color: var(--accent); transform: translateY(-3px); }
+.vital-card .icon { font-size: 2.5rem; margin-bottom: 10px; }
+.vital-card .value { font-size: 3rem; font-weight: 800; }
+.vital-card .label { color: var(--text-muted); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; margin-top: 5px; }
+.vital-card .unit { font-size: 1.2rem; font-weight: 400; }
+.vital-card .status { font-size: 0.8rem; margin-top: 10px; padding: 5px 15px; border-radius: 20px; display: inline-block; }
+
+.spo2-card .value { color: #3b82f6; }
+.temp-card .value { color: #f59e0b; }
+.hr-card .value { color: #ef4444; }
+
+.status-normal { background: rgba(16,185,129,0.2); color: #10b981; border: 1px solid rgba(16,185,129,0.3); }
+.status-warning { background: rgba(245,158,11,0.2); color: #f59e0b; border: 1px solid rgba(245,158,11,0.3); }
+.status-danger { background: rgba(239,68,68,0.2); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
+
+.stat-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  padding: 20px;
+  text-align: center;
+}
+.stat-box .stat-value { font-size: 1.8rem; font-weight: 700; color: var(--accent); }
+.stat-box .stat-label { color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; }
+
+.reading-table { color: #ccccdd; }
+.reading-table th { color: var(--accent); border-bottom: 2px solid var(--border); padding: 12px; }
+.reading-table td { padding: 10px 12px; border-bottom: 1px solid rgba(42,42,74,0.5); }
+.reading-table tr:hover { background: rgba(0,212,255,0.03); }
+
+.chart-container {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+.chart-container h5 { color: #ffffff; margin-bottom: 15px; }
+
+.time-badge {
+  background: rgba(0,212,255,0.1);
+  color: var(--accent);
+  padding: 3px 10px;
+  border-radius: 15px;
+  font-size: 0.75rem;
+}
+</style>
+</head>
+<body>
+<%- include('partials/header') %>
+
+<!-- Hero -->
+<div class="health-hero">
+  <div class="container">
+    <i class="fas fa-heartbeat"></i>
+    <h1>Health Monitoring System</h1>
+    <p style="color:var(--text-muted);">
+      <span class="live-indicator"></span> Live Readings - SpO2, Temperature, Heart Rate
+    </p>
+  </div>
+</div>
+
+<div class="container py-4">
+  <!-- Live Vitals -->
+  <div class="row g-4 mb-4">
+    <!-- SpO2 -->
+    <div class="col-md-4">
+      <div class="vital-card spo2-card">
+        <div class="icon">🫁</div>
+        <div class="value" id="spo2Value">
+          <%= latest ? latest.spo2 : '--' %><span class="unit">%</span>
+        </div>
+        <div class="label">SpO2</div>
+        <div class="status" id="spo2Status">
+          <% if (latest) { %>
+            <% if (latest.spo2 >= 95) { %><span class="status-normal">Normal</span>
+            <% } else if (latest.spo2 >= 90) { %><span class="status-warning">Caution</span>
+            <% } else { %><span class="status-danger">Low</span><% } %>
+          <% } else { %>--<% } %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Temperature -->
+    <div class="col-md-4">
+      <div class="vital-card temp-card">
+        <div class="icon">🌡️</div>
+        <div class="value" id="tempValue">
+          <%= latest ? latest.temperature : '--' %><span class="unit">°C</span>
+        </div>
+        <div class="label">Temperature</div>
+        <div class="status" id="tempStatus">
+          <% if (latest) { %>
+            <% if (latest.temperature >= 36 && latest.temperature <= 37.5) { %><span class="status-normal">Normal</span>
+            <% } else if (latest.temperature >= 35 && latest.temperature <= 38) { %><span class="status-warning">Caution</span>
+            <% } else { %><span class="status-danger">Abnormal</span><% } %>
+          <% } else { %>--<% } %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Heart Rate -->
+    <div class="col-md-4">
+      <div class="vital-card hr-card">
+        <div class="icon">❤️</div>
+        <div class="value" id="hrValue">
+          <%= latest ? latest.heart_rate : '--' %><span class="unit">bpm</span>
+        </div>
+        <div class="label">Heart Rate</div>
+        <div class="status" id="hrStatus">
+          <% if (latest) { %>
+            <% if (latest.heart_rate >= 60 && latest.heart_rate <= 100) { %><span class="status-normal">Normal</span>
+            <% } else if (latest.heart_rate >= 50 && latest.heart_rate <= 110) { %><span class="status-warning">Caution</span>
+            <% } else { %><span class="status-danger">Abnormal</span><% } %>
+          <% } else { %>--<% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-3">
+      <div class="stat-box">
+        <div class="stat-value" id="avgSpo2"><%= stats.avg_spo2 ? parseFloat(stats.avg_spo2).toFixed(1) : '--' %>%</div>
+        <div class="stat-label">Avg SpO2 (24h)</div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="stat-box">
+        <div class="stat-value" id="avgTemp"><%= stats.avg_temp ? parseFloat(stats.avg_temp).toFixed(1) : '--' %>°C</div>
+        <div class="stat-label">Avg Temp (24h)</div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="stat-box">
+        <div class="stat-value" id="avgHr"><%= stats.avg_hr ? Math.round(stats.avg_hr) : '--' %> bpm</div>
+        <div class="stat-label">Avg Heart Rate (24h)</div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="stat-box">
+        <div class="stat-value" id="totalReadings"><%= stats.total_readings || 0 %></div>
+        <div class="stat-label">Readings Today</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Last Updated -->
+  <div class="text-center mb-4">
+    <span class="time-badge">
+      <i class="fas fa-clock me-1"></i> 
+      Last Updated: <span id="lastUpdate"><%= latest ? new Date(latest.recorded_at).toLocaleString() : 'No data' %></span>
+    </span>
+  </div>
+
+  <!-- Readings Table -->
+  <div class="chart-container">
+    <h5><i class="fas fa-history me-2"></i>Reading History</h5>
+    <div class="table-responsive">
+      <table class="table reading-table">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>SpO2</th>
+            <th>Temperature</th>
+            <th>Heart Rate</th>
+            <th>Device</th>
+          </tr>
+        </thead>
+        <tbody id="readingsTable">
+          <% if (readings && readings.length > 0) { %>
+            <% readings.forEach(function(r) { %>
+              <tr>
+                <td><%= new Date(r.recorded_at).toLocaleString() %></td>
+                <td><%= r.spo2 %>%</td>
+                <td><%= r.temperature %>°C</td>
+                <td><%= r.heart_rate %> bpm</td>
+                <td><%= r.device_id %></td>
+              </tr>
+            <% }) %>
+          <% } else { %>
+            <tr><td colspan="5" class="text-center text-muted">No readings available yet</td></tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- How It Works -->
+  <div class="chart-container">
+    <h5><i class="fas fa-info-circle me-2"></i>How It Works</h5>
+    <p style="color:var(--text-muted);">
+      This system receives real-time health data from IoT sensors (MAX30102 for SpO2/Heart Rate, DS18B20 for temperature) 
+      connected to an ESP32 microcontroller. Data is sent via WiFi to our cloud server and displayed live on this dashboard.
+    </p>
+    <p style="color:var(--text-muted);">
+      <strong>API Endpoint:</strong> POST <code style="background:rgba(0,212,255,0.1);padding:2px 8px;border-radius:5px;">/health/api/submit</code>
+    </p>
+  </div>
+</div>
+
+<%- include('partials/footer') %>
+<%- include('partials/whatsapp') %>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// Auto-refresh health data every 10 seconds
+function refreshData() {
+  fetch('/health/api/latest')
+    .then(res => res.json())
+    .then(data => {
+      if (data.latest) {
+        // Update vital values
+        document.getElementById('spo2Value').innerHTML = data.latest.spo2 + '<span class="unit">%</span>';
+        document.getElementById('tempValue').innerHTML = data.latest.temperature + '<span class="unit">°C</span>';
+        document.getElementById('hrValue').innerHTML = data.latest.heart_rate + '<span class="unit">bpm</span>';
+        
+        // Update status badges
+        updateStatus('spo2Status', data.latest.spo2, 95, 90, 'spo2');
+        updateStatus('tempStatus', data.latest.temperature, 37.5, 36, 'temp');
+        updateStatus('hrStatus', data.latest.heart_rate, 100, 60, 'hr');
+        
+        // Update time
+        document.getElementById('lastUpdate').textContent = new Date(data.latest.recorded_at).toLocaleString();
+      }
+      
+      if (data.stats) {
+        document.getElementById('avgSpo2').textContent = parseFloat(data.stats.avg_spo2).toFixed(1) + '%';
+        document.getElementById('avgTemp').textContent = parseFloat(data.stats.avg_temp).toFixed(1) + '°C';
+        document.getElementById('avgHr').textContent = Math.round(data.stats.avg_hr) + ' bpm';
+      }
+      
+      // Update table
+      if (data.recent && data.recent.length > 0) {
+        let html = '';
+        data.recent.reverse().forEach(function(r) {
+          html += '<tr>';
+          html += '<td>' + new Date(r.recorded_at).toLocaleString() + '</td>';
+          html += '<td>' + r.spo2 + '%</td>';
+          html += '<td>' + r.temperature + '°C</td>';
+          html += '<td>' + r.heart_rate + ' bpm</td>';
+          html += '<td>' + r.device_id + '</td>';
+          html += '</tr>';
+        });
+        document.getElementById('readingsTable').innerHTML = html;
+      }
+    })
+    .catch(err => console.log('Refresh error:', err));
+}
+
+function updateStatus(elementId, value, highOk, lowOk, type) {
+  const el = document.getElementById(elementId);
+  if (!el) return;
+  
+  let status = 'normal';
+  if (type === 'temp') {
+    if (value >= 36 && value <= 37.5) status = 'normal';
+    else if (value >= 35 && value <= 38) status = 'caution';
+    else status = 'danger';
+  } else {
+    if (value >= lowOk) status = 'normal';
+    else if (value >= lowOk - 5) status = 'caution';
+    else status = 'danger';
+  }
+  
+  const labels = { normal: 'Normal', caution: 'Caution', danger: 'Abnormal' };
+  el.innerHTML = '<span class="status-' + status + '">' + labels[status] + '</span>';
+}
+
+// Refresh every 10 seconds
+setInterval(refreshData, 10000);
+</script>
+</body>
+</html>

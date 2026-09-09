@@ -1,0 +1,53 @@
+cat > /home/yxmvmjxp/ardthonapp/views/attendx/register-device.ejs << 'ENDOFFILE'
+<%- include('../layouts/main') %>
+<style>
+.attendx-nav { background: linear-gradient(135deg, #1a1a2e, #0f0f1a); border-bottom: 2px solid #8b5cf6; padding: 15px 0; }
+.attendx-nav a { color: #e0e0e0 !important; text-decoration: none; }
+</style>
+</head>
+<body>
+<nav class="attendx-nav">
+  <div class="container">
+    <a href="/attendx/dashboard"><i class="fas fa-arrow-left me-2"></i> Back to Dashboard</a>
+  </div>
+</nav>
+
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-6">
+      <h2 class="text-center mb-4" style="color:#fff;"><i class="fas fa-plus-circle" style="color:#8b5cf6;"></i> Register AttendX Device</h2>
+      <% if (typeof error_msg !== 'undefined' && error_msg && error_msg.length > 0) { %>
+        <div class="alert alert-danger"><%= error_msg %></div>
+      <% } %>
+      <div class="card shadow border-0 rounded-4" style="background:#1a1a2e;border:1px solid #2a2a4a;">
+        <div class="card-body p-4">
+          <form action="/attendx/register-device" method="POST">
+            <div class="mb-3">
+              <label class="form-label fw-bold" style="color:#ccccdd;">Device Name *</label>
+              <input type="text" name="device_name" class="form-control" style="background:#0a0a16;border:1px solid #2a2a4a;color:#fff;" placeholder="e.g., Main Gate" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold" style="color:#ccccdd;">Location</label>
+              <input type="text" name="location" class="form-control" style="background:#0a0a16;border:1px solid #2a2a4a;color:#fff;" placeholder="e.g., Main Entrance">
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold" style="color:#ccccdd;">Mode</label>
+              <select name="mode" class="form-select" style="background:#0a0a16;border:1px solid #2a2a4a;color:#fff;">
+                <option value="both">Both (Entry & Exit)</option>
+                <option value="entry">Entry Only</option>
+                <option value="exit">Exit Only</option>
+              </select>
+            </div>
+            <button type="submit" class="btn w-100 py-3 rounded-pill fw-bold" style="background:#8b5cf6;color:#fff;">
+              <i class="fas fa-check me-2"></i> Register Device
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+ENDOFFILE

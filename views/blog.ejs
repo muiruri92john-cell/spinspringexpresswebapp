@@ -1,0 +1,22 @@
+<%- include('layouts/main') %>
+</head>
+<body>
+<%- include('partials/header') %>
+<div class="container py-5">
+    <h1>Blog</h1>
+    <% if (blogs && blogs.length > 0) { %>
+        <% blogs.forEach(function(blog) { %>
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5><%= blog.title %></h5>
+                    <a href="/blog/<%= blog.slug %>">Read More</a>
+                </div>
+            </div>
+        <% }) %>
+    <% } else { %>
+        <p>Blog posts coming soon!</p>
+    <% } %>
+</div>
+<%- include('partials/footer') %>
+</body>
+</html>

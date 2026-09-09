@@ -1,0 +1,48 @@
+<% layout('layouts/main', { title: title }) %>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-camera me-2"></i>Scan QR Code</h4>
+                </div>
+                <div class="card-body text-center">
+                    <div id="qr-reader" style="width: 100%; max-width: 500px; margin: 0 auto;"></div>
+                    
+                    <div class="mt-4">
+                        <h5>Instructions</h5>
+                        <ol class="text-start d-inline-block">
+                            <li>Allow camera access when prompted</li>
+                            <li>Hold the QR code steady in front of the camera</li>
+                            <li>Verification will happen automatically</li>
+                        </ol>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <a href="/allersafe/verify" class="btn btn-outline-secondary">
+                            <i class="fas fa-keyboard me-2"></i>Enter Code Manually
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script>
+    const html5QrCode = new Html5Qrcode("qr-reader");
+    
+    const qrCodeSuccessCallback = (decodedText, decodedResult) => {
+        html5QrCode.stop().then(() => {
+            window.location.href = '/allersafe/verify?qr_code=' + encodeURIComponent(decodedText);
+        }).catch(err => console.error(err));
+    };
+    
+    html5QrCode.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: { width: 250, height: 250 } },
+        qrCodeSuccessCallback
+    ).catch(err => console.error("Unable to start scanning:", err));
+</script>

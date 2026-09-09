@@ -1,0 +1,116 @@
+<% layout('layouts/main', { title: title }) %>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-qrcode me-2"></i>Verify Jewellery</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Manual Entry -->
+                    <form method="GET" action="/allersafe/verify" class="mb-4">
+                        <div class="mb-3">
+                            <label class="form-label">Enter QR Code or Product ID</label>
+                            <div class="input-group">
+                                <input type="text" name="qr_code" class="form-control" placeholder="Scan QR code or enter manually..." required>
+                                <button type="submit" class="btn btn-primary">Verify</button>
+                            </div>
+                        </div>
+                    </form>
+                    
+                    <div class="text-center mb-4">
+                        <hr class="my-4">
+                        <a href="/allersafe/scan" class="btn btn-outline-primary btn-lg">
+                            <i class="fas fa-camera me-2"></i>Scan QR Code with Camera
+                        </a>
+                    </div>
+                    
+                    <!-- Verification Result -->
+                    <% if (verificationResult) { %>
+                        <% if (verificationResult.error) { %>
+                            <div class="alert alert-danger">
+                                <i class="fas fa-times-circle me-2"></i>
+                                <%= verificationResult.error %>
+                            </div>
+                        <% } else { 
+                            const product = verificationResult.product;
+                        %>
+                            <div class="alert alert-<%= verificationResult.isSafeForUser ? 'success' : 'warning' %>">
+                                <div class="d-flex align-items-start">
+                                    <i class="fas fa-<%= verificationResult.isSafeForUser ? 'check-circle' : 'exclamation-triangle' %> fa-2x me-3"></i>
+                                    <div>
+                                        <h5 class="mb-2"><%= verificationResult.isSafeForUser ? '✓ Product Verified - Safe for You!' : '⚠️ Product Verified - Caution Advised' %></h5>
+                                        
+                                        <table class="table table-sm table-borderless mt-3">
+                                            <tr>
+                                                <td width="120"><strong>Product:</strong></td>
+                                                <td><%= product.name %></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Material:</strong></td>
+                                                <td>
+                                                    <%= product.material_name %>
+                                                    <span class="badge bg-<%= product.allergy_risk_level === 'safe' ? 'success' : (product.allergy_risk_level === 'low' ? 'info' : 'warning') %> ms-2">
+                                                        <%= product.allergy_risk_level.toUpperCase() %>
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Certification:</strong></td>
+                                                <td>
+                                                    <% if (product.certification_status) { %>
+                                                        <span class="badge bg-success"><i class="fas fa-certificate me-1"></i>Verified Hypoallergenic</span>
+                                                    <% } else { %>
+                                                        <span class="badge bg-warning">Pending Certification</span>
+                                                    <% } %>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Material Info:</strong></td>
+                                                <td><small class="text-muted"><%= product.material_description %></small></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Common Allergens:</strong></td>
+                                                <td><%= product.common_allergens %></td>
+                                            </tr>
+                                        </table>
+                                        
+                                        <% if (verificationResult.warningMessage) { %>
+                                            <div class="alert alert-warning mt-3 mb-0">
+                                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                                <%= verificationResult.warningMessage %>
+                                            </div>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                        <% } %>
+                    <% } %>
+                </div>
+            </div>
+            
+            <!-- Trust Badges -->
+            <div class="row mt-4 g-3">
+                <div class="col-md-4">
+                    <div class="text-center">
+                        <i class="fas fa-shield-alt fa-2x text-success"></i>
+                        <p class="small mt-2">100% Verified Products</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-center">
+                        <i class="fas fa-clock fa-2x text-success"></i>
+                        <p class="small mt-2">Real-time Verification</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-center">
+                        <i class="fas fa-gem fa-2x text-success"></i>
+                        <p class="small mt-2">Trusted Materials</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

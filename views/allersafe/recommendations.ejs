@@ -1,0 +1,82 @@
+<% layout('layouts/main', { title: title }) %>
+
+<div class="container py-5">
+    <!-- Header -->
+    <div class="text-center mb-5">
+        <i class="fas fa-robot fa-3x text-primary mb-3"></i>
+        <h1>AI-Powered Recommendations</h1>
+        <p class="lead">Products carefully selected based on your allergy profile</p>
+    </div>
+    
+    <!-- Profile Summary -->
+    <% if (profile) { %>
+        <div class="alert alert-<%= profile.severity_level === 'severe' ? 'danger' : (profile.severity_level === 'moderate' ? 'warning' : 'info') %> mb-4">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-info-circle fa-2x me-3"></i>
+                <div>
+                    <strong>Your Sensitivity Level: <%= profile.severity_level.toUpperCase() %></strong><br>
+                    <% if (profile.severity_level === 'severe') { %>
+                        Showing only SAFE materials (Titanium, Platinum, Niobium, Palladium, 18K+ Gold)
+                    <% } else if (profile.severity_level === 'moderate') { %>
+                        Showing SAFE and LOW RISK materials
+                    <% } else { %>
+                        Showing SAFE, LOW, and MEDIUM risk materials
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    <% } else { %>
+        <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <a href="/allersafe/profile">Create your allergy profile</a> for personalized recommendations!
+        </div>
+    <% } %>
+    
+    <!-- Safe Materials Summary -->
+    <% if (safeMaterials && safeMaterials.length > 0) { %>
+        <div class="mb-4">
+            <h5>✓ Safe for you:</h5>
+            <div class="d-flex flex-wrap gap-2">
+                <% safeMaterials.forEach(m => { %>
+                    <span class="badge bg-success p-2"><%= m.material_name %></span>
+                <% }) %>
+            </div>
+        </div>
+    <% } %>
+    
+    <!-- Recommendations Grid -->
+    <h3 class="mb-4">Recommended for You</h3>
+    
+    <div class="row g-4">
+        <% if (recommendations && recommendations.length > 0) { %>
+            <% recommendations.forEach(product => { %>
+                <div class="col-md-3">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <span class="badge bg-<%= product.allergy_risk_level === 'safe' ? 'success' : (product.allergy_risk_level === 'low' ? 'info' : 'warning') %> mb-2">
+                                <%= product.material_name %>
+                            </span>
+                            <h5 class="card-title"><%= product.name %></h5>
+                            <p class="card-text text-muted small"><%= product.description.substring(0, 80) %>...</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="h5 text-primary mb-0">KSh <%= product.price.toFixed(2) %></span>
+                                <a href="/allersafe/product/<%= product.slug %>" class="btn btn-sm btn-outline-primary">View</a>
+                            </div>
+                            <% if (product.avg_rating) { %>
+                                <div class="mt-2 small">
+                                    <i class="fas fa-star text-warning"></i> <%= product.avg_rating.toFixed(1) %> (<%= product.review_count %>)
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            <% }) %>
+        <% } else { %>
+            <div class="col-12 text-center py-5">
+                <i class="fas fa-gem fa-4x text-muted mb-3"></i>
+                <p>No recommendations yet. Complete your allergy profile first!</p>
+                <a href="/allersafe/profile" class="btn btn-primary">Create Allergy Profile</a>
+            </div>
+        <% } %>
+    </div>
+</div>

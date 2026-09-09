@@ -1,0 +1,45 @@
+<%- include('layouts/main') %>
+</head>
+<body>
+<%- include('partials/header') %>
+<section class="section">
+    <div class="container">
+        <h1 class="text-center mb-4">Products</h1>
+        <% if (success_msg && success_msg.length > 0) { %><div class="alert alert-success"><%= success_msg %></div><% } %>
+        <% if (products && products.length > 0) { %>
+            <div class="row">
+                <% products.forEach(function(product) { %>
+                    <div class="col-md-3">
+                        <div class="card product-card">
+                            <div class="card-body text-center">
+                                <% if (product.images && product.images[0]) { %>
+                                    <img src="<%= product.images[0].url %>" alt="<%= product.name %>" style="height:150px;object-fit:contain;margin-bottom:15px;">
+                                <% } %>
+                                <h5><%= product.name %></h5>
+                                <p class="text-muted"><%= product.category %></p>
+                                <p class="price">$<%= product.price %></p>
+                                <a href="/products/<%= product.slug %>" class="btn btn-outline-primary btn-sm">View Details</a>
+                                <button onclick="addToCart(<%= product.id %>)" class="btn btn-primary btn-sm mt-1">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        <% } else { %>
+            <p class="text-center">No products available yet.</p>
+        <% } %>
+    </div>
+</section>
+<%- include('partials/footer') %>
+<%- include('partials/whatsapp') %>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+async function addToCart(id) {
+    const res = await fetch('/products/add-to-cart/' + id, { method: 'POST' });
+    const data = await res.json();
+    if (data.success) alert('Added to cart! (' + data.cartCount + ' items)');
+    else alert('Error adding to cart');
+}
+</script>
+</body>
+</html>

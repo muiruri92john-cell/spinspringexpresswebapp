@@ -1,0 +1,61 @@
+<%- include('../layouts/main') %>
+<style>
+.attendx-auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1a1a2e, #0f0f1a);
+  padding: 20px;
+}
+.attendx-auth-card {
+  background: #1a1a2e;
+  border: 1px solid #2a2a4a;
+  border-radius: 25px;
+  padding: 45px;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+  max-width: 460px;
+  width: 100%;
+}
+.attendx-logo { text-align: center; margin-bottom: 35px; }
+.attendx-logo i { font-size: 4rem; color: #8b5cf6; margin-bottom: 10px; }
+.attendx-logo h2 { font-weight: 800; color: #ffffff; margin: 0; }
+.attendx-logo p { color: #8888aa; margin: 5px 0 0; }
+</style>
+</head>
+<body>
+<div class="attendx-auth-page">
+  <div class="attendx-auth-card">
+    <div class="attendx-logo">
+      <i class="fas fa-school"></i>
+      <h2>AttendX</h2>
+      <p>School Gate Attendance System</p>
+    </div>
+    <% if (typeof success_msg !== 'undefined' && success_msg && success_msg.length > 0) { %>
+      <div class="alert alert-success"><%= success_msg %></div>
+    <% } %>
+    <% if (typeof error_msg !== 'undefined' && error_msg && error_msg.length > 0) { %>
+      <div class="alert alert-danger"><%= error_msg %></div>
+    <% } %>
+    <form action="/attendx/login" method="POST">
+      <div class="mb-3">
+        <label class="form-label" style="color:#ccccdd;">Email</label>
+        <input type="email" name="email" class="form-control" style="background:#0a0a16;border:1px solid #2a2a4a;color:#fff;" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label" style="color:#ccccdd;">Password</label>
+        <input type="password" name="password" class="form-control" style="background:#0a0a16;border:1px solid #2a2a4a;color:#fff;" required>
+      </div>
+      <button type="submit" class="btn w-100 py-3 fw-bold" style="background:#8b5cf6;color:#fff;border-radius:50px;">
+        <i class="fas fa-sign-in-alt me-2"></i> Login to AttendX
+      </button>
+    </form>
+    <div class="text-center mt-3">
+      <p style="color:#8888aa;">Don't have an account? <a href="/attendx/register" style="color:#8b5cf6;">Register here</a></p>
+      <a href="/" style="color:#8888aa;font-size:0.9rem;">← Back to Ardthon Solutions</a>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<% layout('layouts/main', { title: title }) %>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-user-md me-2"></i>Your Allergy Profile</h4>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-4">Tell us about your metal allergies so we can recommend safe jewellery for you.</p>
+                    
+                    <form method="POST">
+                        <h5 class="mb-3"><i class="fas fa-exclamation-triangle text-warning me-2"></i>Select your metal allergies:</h5>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" name="nickel_allergy" id="nickel" <%= profile && profile.nickel_allergy ? 'checked' : '' %>>
+                                    <label class="form-check-label" for="nickel">
+                                        <strong>Nickel Allergy</strong>
+                                        <span class="badge bg-danger ms-2">Most Common</span>
+                                    </label>
+                                    <div class="small text-muted">Found in costume jewellery, watchbands</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" name="cobalt_allergy" id="cobalt" <%= profile && profile.cobalt_allergy ? 'checked' : '' %>>
+                                    <label class="form-check-label" for="cobalt">Cobalt Allergy</label>
+                                    <div class="small text-muted">Found in cheap white gold, some stainless steel</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" name="copper_allergy" id="copper" <%= profile && profile.copper_allergy ? 'checked' : '' %>>
+                                    <label class="form-check-label" for="copper">Copper Allergy</label>
+                                    <div class="small text-muted">Found in rose gold, base metals</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" name="chromium_allergy" id="chromium" <%= profile && profile.chromium_allergy ? 'checked' : '' %>>
+                                    <label class="form-check-label" for="chromium">Chromium Allergy</label>
+                                    <div class="small text-muted">Found in some metal alloys</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label"><i class="fas fa-list me-2"></i>Other Allergies</label>
+                            <textarea name="other_allergies" class="form-control" rows="2" placeholder="List any other metal allergies or sensitivities..."><%= profile ? profile.other_allergies : '' %></textarea>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label"><i class="fas fa-chart-line me-2"></i>Reaction Severity</label>
+                            <select name="severity_level" class="form-select">
+                                <option value="mild" <%= profile && profile.severity_level === 'mild' ? 'selected' : '' %>>Mild - Minor irritation, slight redness</option>
+                                <option value="moderate" <%= profile && profile.severity_level === 'moderate' ? 'selected' : '' %>>Moderate - Noticeable rash, itching</option>
+                                <option value="severe" <%= profile && profile.severity_level === 'severe' ? 'selected' : '' %>>Severe - Intense reaction, blistering</option>
+                            </select>
+                        </div>
+                        
+                        <div class="alert alert-info small">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>How we use this information:</strong> We'll only show you products made from materials safe for your specific allergies.
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100 py-2">
+                            <i class="fas fa-save me-2"></i>Save Profile & Get Recommendations
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

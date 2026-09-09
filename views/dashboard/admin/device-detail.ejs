@@ -1,0 +1,65 @@
+<%- include('../layouts/main') %>
+<style>
+.admin-nav { background: #1a1a2e; border-bottom: 2px solid #00d4ff; padding: 15px 0; }
+.admin-nav a { color: #e0e0e0; text-decoration: none; margin: 0 15px; }
+body { background: #0f0f1a; }
+.card-dark { background: #1a1a2e; border: 1px solid #2a2a4a; border-radius: 15px; padding: 20px; margin-bottom: 20px; }
+</style>
+</head>
+<body style="background:#0f0f1a;">
+
+<nav class="admin-nav">
+  <div class="container">
+    <a href="/admin">← Back to Admin</a>
+    <a href="/admin/users">Users</a>
+    <a href="/admin/payments">Payments</a>
+  </div>
+</nav>
+
+<div class="container py-4">
+  <h2 style="color:#fff;"><%= device.device_name %></h2>
+  <p style="color:#888;">Owner: <%= device.owner_name || 'N/A' %> (<%= device.email || 'N/A' %>) | Status: <span style="color:<%= device.status === 'online' ? '#10b981' : '#ef4444' %>;"><%= device.status %></span></p>
+
+  <!-- Send Command -->
+  <div class="card-dark">
+    <h4 style="color:#00d4ff;">Send Command</h4>
+    <form action="/admin/device/<%= device.device_id %>/command" method="POST" style="display:flex;gap:10px;flex-wrap:wrap;">
+      <select name="command_type" style="background:#0a0a16;color:#fff;border:1px solid #2a2a4a;padding:10px;border-radius:8px;">
+        <option value="change_price">Change Price</option>
+        <option value="add_games">Add Games</option>
+        <option value="restart">Restart Device</option>
+        <option value="reset_today">Reset Today Stats</option>
+        <option value="sync_now">Force Sync</option>
+      </select>
+      <input type="text" name="command_value" placeholder="Value" required style="background:#0a0a16;color:#fff;border:1px solid #2a2a4a;padding:10px;border-radius:8px;">
+      <button type="submit" style="background:#00d4ff;color:#000;border:none;padding:10px 25px;border-radius:8px;font-weight:700;cursor:pointer;">Send</button>
+    </form>
+  </div>
+
+  <!-- Actions -->
+  <div class="card-dark" style="display:flex;gap:10px;flex-wrap:wrap;">
+    <form action="/admin/device/<%= device.device_id %>/reset-revenue" method="POST" onsubmit="return confirm('Reset all revenue?');">
+      <button type="submit" style="background:#f59e0b;color:#000;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;">Reset Revenue</button>
+    </form>
+    <form action="/admin/device/<%= device.device_id %>/delete" method="POST" onsubmit="return confirm('DELETE this device permanently?');">
+      <button type="submit" style="background:#ef4444;color:#fff;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;">Delete Device</button>
+    </form>
+  </div>
+
+  <!-- Recent Payments -->
+  <div class="card-dark">
+    <h4 style="color:#00d4ff;">Recent Payments</h4>
+    <table style="width:100%;color:#ccc;">
+      <thead><tr><th>TX ID</th><th>Amount</th><th>Customer</th><th>Games</th><th>Time</th></tr></thead>
+      <tbody>
+        <% payments.forEach(function(p) { %>
+          <tr><td style="font-size:0.75rem;"><%= p.transaction_id %></td><td>Ksh <%= p.amount %></td><td><%= p.customer_number %></td><td><%= p.games_earned %></td><td style="font-size:0.75rem;"><%= new Date(p.payment_time).toLocaleString() %></td></tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,206 @@
+cat > /home/yxmvmjxp/ardthonapp/views/allersafe/index.ejs << 'EOF'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALLERSAFE - Hypoallergenic Jewellery Verification System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f8fafc; }
+        .navbar { background: rgba(255,255,255,0.98) !important; backdrop-filter: blur(10px); box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 12px 0; }
+        .navbar-brand { font-size: 1.4rem; font-weight: 800; color: #2563eb !important; }
+        .nav-link { color: #1e293b !important; font-weight: 500; }
+        .nav-link:hover { color: #2563eb !important; }
+        .allersafe-hero { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 80px 0; color: white; }
+        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; border-radius: 50px; padding: 12px 30px; transition: all 0.3s; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(102,126,234,0.4); }
+        .btn-outline-light { border-radius: 50px; padding: 12px 30px; border: 2px solid white; }
+        .btn-outline-light:hover { background: white; color: #667eea; }
+        .card { transition: transform 0.3s ease, box-shadow 0.3s ease; border-radius: 15px; border: none; overflow: hidden; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 35px rgba(0,0,0,0.1); }
+        .badge { padding: 6px 12px; border-radius: 20px; font-weight: 600; }
+        .bg-light-custom { background-color: #f1f5f9; }
+        footer { background: #1e293b; color: white; padding: 40px 0; margin-top: 60px; }
+        .text-primary-custom { color: #667eea !important; }
+        .fas.fa-3x { color: #667eea; }
+        @media (max-width: 768px) {
+            .allersafe-hero h1 { font-size: 2rem; }
+            .allersafe-hero { padding: 60px 0; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Simple Navbar -->
+<nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">
+            <i class="fas fa-microchip me-2" style="color:#2563eb;"></i>Ardthon<span style="color:#f59e0b;">Solutions</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mx-auto">
+                <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="/products">Products</a></li>
+                <li class="nav-item"><a class="nav-link" href="/projects">Projects</a></li>
+                <li class="nav-item"><a class="nav-link" href="/cuepay/login">CuePay</a></li>
+            </ul>
+            <div class="d-flex gap-2">
+                <% if (user) { %>
+                    <a href="/auth/logout" class="btn btn-sm btn-outline-danger">Logout</a>
+                <% } else { %>
+                    <a href="/auth/login" class="btn btn-sm btn-outline-primary">Login</a>
+                    <a href="/auth/register" class="btn btn-sm btn-primary">Register</a>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div style="padding-top: 76px;"></div>
+
+<!-- Hero Section -->
+<section class="allersafe-hero">
+    <div class="container text-center">
+        <i class="fas fa-gem fa-4x mb-3"></i>
+        <h1 class="display-4 fw-bold">ALLERSAFE</h1>
+        <p class="lead fs-3">Hypoallergenic Jewellery Verification & Recommendation System</p>
+        <p class="mb-4">Wear with confidence. No more rashes, no more worries.</p>
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+            <a href="/allersafe/shop" class="btn btn-light btn-lg px-4">
+                <i class="fas fa-shopping-bag me-2"></i>Shop Now
+            </a>
+            <a href="/allersafe/verify" class="btn btn-outline-light btn-lg px-4">
+                <i class="fas fa-qrcode me-2"></i>Verify Product
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-5 bg-dark text-white">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-3 mb-3">
+                <div class="display-4 fw-bold text-primary-custom">10-20%</div>
+                <p>Population affected by metal allergies</p>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="display-4 fw-bold text-primary-custom">9+</div>
+                <p>Hypoallergenic materials</p>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="display-4 fw-bold text-primary-custom">100%</div>
+                <p>Verified products</p>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="display-4 fw-bold text-primary-custom">24/7</div>
+                <p>Peace of mind</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Why Choose Section -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Why Choose ALLERSAFE?</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 text-center shadow-sm">
+                    <div class="card-body">
+                        <i class="fas fa-shield-alt fa-3x mb-3"></i>
+                        <h4>Verified Products</h4>
+                        <p class="text-muted">Every product undergoes rigorous verification for hypoallergenic safety.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 text-center shadow-sm">
+                    <div class="card-body">
+                        <i class="fas fa-robot fa-3x mb-3"></i>
+                        <h4>AI Recommendations</h4>
+                        <p class="text-muted">Personalized suggestions based on your specific metal allergies.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 text-center shadow-sm">
+                    <div class="card-body">
+                        <i class="fas fa-qrcode fa-3x mb-3"></i>
+                        <h4>QR Verification</h4>
+                        <p class="text-muted">Scan any QR code to instantly verify material composition.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Products -->
+<section class="py-5 bg-light-custom">
+    <div class="container">
+        <h2 class="text-center mb-5">Featured Hypoallergenic Jewellery</h2>
+        <div class="row g-4">
+            <% if (featuredProducts && featuredProducts.length > 0) { %>
+                <% featuredProducts.forEach(product => { %>
+                    <div class="col-md-3">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body">
+                                <span class="badge bg-success mb-2"><%= product.material_name %></span>
+                                <h5 class="card-title"><%= product.name %></h5>
+                                <p class="card-text text-muted small"><%= product.description.substring(0, 80) %>...</p>
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <span class="h5 text-primary mb-0">KSh <%= parseFloat(product.price).toFixed(2) %></span>
+                                    <a href="/allersafe/product/<%= product.slug %>" class="btn btn-sm btn-outline-primary">View</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <div class="col-12 text-center py-5">
+                    <p>Products coming soon. Check back later!</p>
+                </div>
+            <% } %>
+        </div>
+        <div class="text-center mt-4">
+            <a href="/allersafe/shop" class="btn btn-primary">View All Products <i class="fas fa-arrow-right ms-2"></i></a>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5 bg-primary text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <div class="container text-center">
+        <h3>Ready to find jewellery that's safe for you?</h3>
+        <p class="mb-4">Create your allergy profile and get personalized recommendations.</p>
+        <% if (user) { %>
+            <a href="/allersafe/profile" class="btn btn-light btn-lg">Create Your Profile <i class="fas fa-arrow-right ms-2"></i></a>
+        <% } else { %>
+            <a href="/auth/register" class="btn btn-light btn-lg">Sign Up Free <i class="fas fa-arrow-right ms-2"></i></a>
+        <% } %>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer>
+    <div class="container text-center">
+        <p>&copy; 2026 Ardthon Solutions. ALLERSAFE - Hypoallergenic Jewellery System</p>
+        <div class="mt-2">
+            <a href="/allersafe" class="text-white-50 text-decoration-none me-3">Home</a>
+            <a href="/allersafe/shop" class="text-white-50 text-decoration-none me-3">Shop</a>
+            <a href="/allersafe/verify" class="text-white-50 text-decoration-none">Verify</a>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+EOF

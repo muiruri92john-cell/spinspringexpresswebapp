@@ -1,0 +1,62 @@
+<nav class="navbar navbar-expand-lg fixed-top" style="background:rgba(15,15,26,0.95);backdrop-filter:blur(15px);border-bottom:1px solid #2a2a4a;">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/" style="color:#ffffff;font-size:1.4rem;">
+            <i class="fas fa-microchip me-2" style="color:#00d4ff;"></i>Ardthon<span style="color:#00d4ff;">Solutions</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" style="border-color:#444466;">
+            <span class="navbar-toggler-icon" style="filter:invert(1);"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mx-auto">
+               <li class="nav-item"><a class="nav-link" href="/" style="color:#ffffff !important;font-weight:500;">Home</a></li>
+               <li class="nav-item"><a class="nav-link" href="/products" style="color:#ffffff !important;font-weight:500;">Products</a></li>
+               
+               <!-- Projects Dropdown Menu -->
+               <li class="nav-item dropdown">
+                   <a class="nav-link dropdown-toggle" href="#" id="projectsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color:#ffffff !important;font-weight:500;">
+                       Projects
+                   </a>
+                   <ul class="dropdown-menu" aria-labelledby="projectsDropdown" style="background:#1a1a2e;border:1px solid #2a2a4a;">
+                       <li><a class="dropdown-item" href="/projects" style="color:#e0e0f0;"><i class="fas fa-folder-open me-2"></i>All Projects</a></li>
+                       <li><hr class="dropdown-divider" style="border-color:#2a2a4a;"></li>
+                       <li><a class="dropdown-item" href="/projects/cuepay-pool-automation" style="color:#e0e0f0;"><i class="fas fa-pool me-2"></i>CuePay - Pool Automation</a></li>
+                       <li><a class="dropdown-item" href="/allersafe" style="color:#e0e0f0;"><i class="fas fa-gem me-2"></i>ALLERSAFE - Hypoallergenic Jewellery</a></li>
+                       <li class="nav-item"><a class="nav-link" href="/health" style="color:#e0e0f0;font-weight:500;">Health</a></li>
+                    </ul>
+               </li>
+               
+               <li class="nav-item"><a class="nav-link" href="/blog" style="color:#ffffff !important;font-weight:500;">Blog</a></li>
+               <li class="nav-item"><a class="nav-link" href="/discord" style="color:#ffffff !important;font-weight:500;">Discord</a></li>
+               <li class="nav-item"><a class="nav-link" href="/about" style="color:#ffffff !important;font-weight:500;">About</a></li>
+               <li class="nav-item"><a class="nav-link" href="/contact" style="color:#ffffff !important;font-weight:500;">Contact</a></li>
+               <li class="nav-item"><a class="nav-link" href="/cuepay/login" style="color:#00d4ff !important;font-weight:700;">CuePay</a></li>
+               <li class="nav-item"><a class="nav-link" href="/attendx/login" style="color:#8b5cf6;font-weight:600;">AttendX</a></li>
+            </ul>
+            
+            <div class="d-flex align-items-center gap-2">
+                <a href="/orders/cart" class="btn btn-sm position-relative" style="border:1px solid #444466;color:#e0e0f0;border-radius:50px;">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="badge" style="background:#00d4ff;color:#0a0a14;position:absolute;top:-8px;right:-8px;display:<%= cartCount > 0 ? 'inline' : 'none' %>;"><%= cartCount %></span>
+                </a>
+                <% if (user) { %>
+                    <div class="dropdown">
+                        <button class="btn btn-sm dropdown-toggle" data-bs-toggle="dropdown" style="background:#00d4ff;color:#0a0a14;border-radius:50px;font-weight:600;">
+                            <i class="fas fa-user me-1"></i><%= user.username %>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" style="background:#1a1a2e;border:1px solid #2a2a4a;">
+                            <li><a class="dropdown-item" href="/dashboard" style="color:#e0e0f0;"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
+                            <li><a class="dropdown-item" href="/allersafe/profile" style="color:#e0e0f0;"><i class="fas fa-user-md me-2"></i>Allergy Profile</a></li>
+                            <li><a class="dropdown-item" href="/allersafe/favorites" style="color:#e0e0f0;"><i class="fas fa-heart me-2"></i>Favorites</a></li>
+                            <li><hr class="dropdown-divider" style="border-color:#2a2a4a;"></li>
+                            <li><a class="dropdown-item" href="/auth/logout" style="color:#e0e0f0;"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                        </ul>
+                    </div>
+                <% } else { %>
+                    <a href="/auth/login" class="btn btn-sm" style="border:1px solid #444466;color:#e0e0f0;border-radius:50px;">Login</a>
+                    <a href="/auth/register" class="btn btn-sm" style="background:#00d4ff;color:#0a0a14;border-radius:50px;font-weight:600;">Register</a>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</nav>
+<div style="padding-top: 76px;"></div>

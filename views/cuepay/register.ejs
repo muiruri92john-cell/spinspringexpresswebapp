@@ -1,0 +1,67 @@
+<%- include('../layouts/main') %>
+<style>
+.cuepay-auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #0ea5e9, #0284c7);
+  padding: 20px;
+}
+.cuepay-auth-card {
+  background: white;
+  border-radius: 25px;
+  padding: 45px;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+  max-width: 500px;
+  width: 100%;
+}
+</style>
+</head>
+<body>
+<div class="cuepay-auth-page">
+  <div class="cuepay-auth-card">
+    <div class="text-center mb-4">
+      <i class="fas fa-water fa-3x" style="color:#0ea5e9;"></i>
+      <h2 class="fw-bold mt-2">Create CuePay Account</h2>
+      <p class="text-muted">Register to manage your pool tables</p>
+    </div>
+    <% if (typeof error_msg !== 'undefined' && error_msg && error_msg.length > 0) { %>
+      <div class="alert alert-danger"><%= error_msg %></div>
+    <% } %>
+    <form action="/cuepay/register" method="POST">
+      <div class="mb-3">
+        <label class="form-label">Full Name</label>
+        <input type="text" name="full_name" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Business Name</label>
+        <input type="text" name="business_name" class="form-control" placeholder="Your bar/restaurant name">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Phone Number</label>
+        <input type="text" name="phone" class="form-control" placeholder="+254...">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input type="email" name="email" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Password</label>
+        <input type="password" name="password" class="form-control" required minlength="6">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Confirm Password</label>
+        <input type="password" name="password2" class="form-control" required>
+      </div>
+      <button type="submit" class="btn btn-primary w-100 py-3 fw-bold" style="background:#0ea5e9;border:none;border-radius:50px;">
+        Create Account
+      </button>
+    </form>
+    <div class="text-center mt-3">
+      <p>Already have an account? <a href="/cuepay/login" style="color:#0ea5e9;">Login</a></p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,46 @@
+# ============================================
+# SPINSPRING SUBDOMAIN PROXY
+# ============================================
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+    
+    # Preserve Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+    
+    # Don't rewrite if file exists (for static files like CSS, JS, images)
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    
+    # Proxy all requests to Node.js SpinSpring routes
+    RewriteRule ^(.*)$ http://localhost:3000/spinspg/$1 [P,L]
+</IfModule>
+
+# ============================================
+# SECURITY HEADERS
+# ============================================
+<IfModule mod_headers.c>
+    Header set X-XSS-Protection "1; mode=block"
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# ============================================
+# BLOCK SENSITIVE FILES
+# ============================================
+<FilesMatch "\.(env|json|md|log|sql)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# ============================================
+# PREVENT DIRECTORY LISTING
+# ============================================
+Options -Indexes
+
+# ============================================
+# CHARACTER ENCODING
+# ============================================
+AddDefaultCharset UTF-8

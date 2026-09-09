@@ -1,0 +1,68 @@
+<%- include('../../layouts/main') %>
+<style>
+.cuepay-nav { background: linear-gradient(135deg, #0ea5e9, #0284c7); padding: 15px 0; }
+.cuepay-nav a { color: white !important; text-decoration: none; }
+.customer-table { font-size: 0.9rem; }
+.tier-badge { padding: 3px 10px; border-radius: 15px; font-size: 0.7rem; font-weight: 600; }
+.tier-bronze { background: #fef3c7; color: #92400e; }
+.tier-silver { background: #e2e8f0; color: #475569; }
+.tier-gold { background: #fef9c3; color: #854d0e; }
+.tier-platinum { background: #dbeafe; color: #1e40af; }
+</style>
+</head>
+<body>
+<nav class="cuepay-nav">
+  <div class="container">
+    <a href="/cuepay/dashboard"><i class="fas fa-arrow-left me-2"></i> Back to Dashboard</a>
+  </div>
+</nav>
+
+<div class="container py-4">
+  <h2 class="mb-4">Customer Analytics</h2>
+
+  <!-- Retention Stats -->
+  <div class="row mb-4">
+    <div class="col-md-4">
+      <div class="card rounded-4 p-3 text-center">
+        <div class="stat-value text-primary"><%= retention.total_customers || 0 %></div>
+        <small>Total Customers (30 days)</small>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card rounded-4 p-3 text-center">
+        <div class="stat-value text-success"><%= retention.returning_customers || 0 %></div>
+        <small>Returning Customers</small>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card rounded-4 p-3 text-center">
+        <div class="stat-value text-warning"><%= retention.new_customers || 0 %></div>
+        <small>New Customers</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top Customers Table -->
+  <h4>Top Customers</h4>
+  <div class="table-responsive">
+    <table class="table table-hover customer-table">
+      <thead><tr><th>#</th><th>Customer</th><th>Visits</th><th>Total Spent</th><th>Games</th><th>Avg/Visit</th><th>Last Visit</th></tr></thead>
+      <tbody>
+        <% topCustomers.forEach(function(c, i) { %>
+          <tr>
+            <td><%= i + 1 %></td>
+            <td><%= c.customer_number %></td>
+            <td><%= c.visits %></td>
+            <td class="fw-bold">Ksh <%= c.total_spent %></td>
+            <td><%= c.total_games %></td>
+            <td>Ksh <%= Math.round(c.avg_spend) %></td>
+            <td><%= new Date(c.last_visit).toLocaleDateString() %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

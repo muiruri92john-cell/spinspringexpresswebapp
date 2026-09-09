@@ -1,0 +1,369 @@
+<%- include('layouts/main') %>
+<style>
+:root {
+  --bg-dark: #0f0f1a;
+  --bg-card: #1a1a2e;
+  --text-primary: #e0e0e0;
+  --text-muted: #8888aa;
+  --accent: #00d4ff;
+  --border: #2a2a4a;
+}
+
+body { background: var(--bg-dark); }
+
+.project-hero {
+  background: linear-gradient(135deg, #0a1628 0%, #0f1f3a 100%);
+  padding: 80px 0 60px;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+.project-hero h1 { color: #ffffff; font-size: 2.5rem; font-weight: 800; }
+.project-hero p { color: var(--text-muted); font-size: 1.2rem; }
+
+.project-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 35px;
+  margin-bottom: 40px;
+  transition: all 0.3s;
+}
+.project-card:hover { border-color: var(--accent); box-shadow: 0 10px 40px rgba(0,212,255,0.1); }
+.project-card h2 { color: var(--accent); font-size: 1.8rem; font-weight: 700; margin-bottom: 10px; }
+.project-card h3 { color: #ffffff; font-size: 1.3rem; margin: 25px 0 15px; padding-bottom: 10px; border-bottom: 2px solid var(--border); }
+.project-card p, .project-card li { color: #bbbbdd; line-height: 1.8; font-size: 1rem; }
+.project-card ul { padding-left: 20px; }
+.project-card li { margin-bottom: 8px; }
+
+.badge-field {
+  display: inline-block;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  margin-bottom: 15px;
+}
+.badge-automation { background: rgba(0,212,255,0.2); color: #00d4ff; border: 1px solid rgba(0,212,255,0.3); }
+.badge-iot { background: rgba(16,185,129,0.2); color: #10b981; border: 1px solid rgba(16,185,129,0.3); }
+
+.tech-tag {
+  display: inline-block;
+  padding: 5px 14px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  font-size: 0.8rem;
+  color: #ccc;
+  margin: 3px;
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+  margin: 20px 0;
+}
+.stat-item {
+  background: rgba(0,0,0,0.3);
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  border: 1px solid var(--border);
+}
+.stat-value { font-size: 2rem; font-weight: 800; color: var(--accent); }
+.stat-label { font-size: 0.8rem; color: var(--text-muted); margin-top: 5px; }
+
+/* Review Section */
+.review-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 30px;
+  margin-top: 30px;
+}
+.review-section h3 { color: #ffffff; margin-bottom: 20px; }
+.review-form textarea {
+  width: 100%;
+  background: #0a0a16;
+  border: 1px solid var(--border);
+  color: #ffffff;
+  padding: 15px;
+  border-radius: 12px;
+  font-size: 1rem;
+  resize: vertical;
+  min-height: 100px;
+}
+.review-form textarea:focus { outline: none; border-color: var(--accent); }
+.review-form input {
+  width: 100%;
+  background: #0a0a16;
+  border: 1px solid var(--border);
+  color: #ffffff;
+  padding: 12px 15px;
+  border-radius: 12px;
+  font-size: 1rem;
+  margin-bottom: 10px;
+}
+.review-form input:focus { outline: none; border-color: var(--accent); }
+.review-form button {
+  background: var(--accent);
+  color: #0a0a14;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 50px;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s;
+}
+.review-form button:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(0,212,255,0.3); }
+
+.review-card {
+  background: rgba(0,0,0,0.2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 15px;
+}
+.review-card .reviewer { color: var(--accent); font-weight: 600; margin-bottom: 5px; }
+.review-card .date { color: var(--text-muted); font-size: 0.8rem; }
+.review-card .text { color: #ccccdd; margin-top: 10px; line-height: 1.6; }
+.review-card .stars { color: #f59e0b; margin-bottom: 8px; }
+
+@media (max-width: 768px) {
+  .project-hero h1 { font-size: 1.8rem; }
+  .project-card { padding: 20px; }
+}
+</style>
+</head>
+<body>
+<%- include('partials/header') %>
+
+<!-- Hero -->
+<div class="project-hero">
+  <div class="container">
+    <h1>Our Projects</h1>
+    <p>Innovative solutions engineered for real-world problems</p>
+  </div>
+</div>
+
+<div class="container py-5">
+
+  <!-- ==================== CUE PAY PROJECT ==================== -->
+  <div class="project-card">
+    <span class="badge-field badge-automation">🏊 Pool Automation</span>
+    <h2>CuePay - Smart Pool Table Management System</h2>
+    <div class="project-images" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin:20px 0;">
+      <img src="/images/projects/cuepay/device.jpg" alt="CuePay Device" style="width:100%;border-radius:12px;border:1px solid var(--border);" onerror="this.style.display='none'">
+      <img src="/images/projects/cuepay/dashboard.jpg" alt="CuePay Dashboard" style="width:100%;border-radius:12px;border:1px solid var(--border);" onerror="this.style.display='none'">
+      <img src="/images/projects/cuepay/hardware.jpg" alt="CuePay Hardware" style="width:100%;border-radius:12px;border:1px solid var(--border);" onerror="this.style.display='none'">
+    </div>
+    <p>An IoT-powered pool table automation system that enables remote monitoring, M-PESA payment integration, real-time revenue tracking, and cloud-based dashboard management for bar and entertainment venue owners.</p>
+
+    <div class="stat-grid">
+      <div class="stat-item"><div class="stat-value">ESP32</div><div class="stat-label">Controller</div></div>
+      <div class="stat-item"><div class="stat-value">M-PESA</div><div class="stat-label">Payment</div></div>
+      <div class="stat-item"><div class="stat-value">4G/GSM</div><div class="stat-label">Connectivity</div></div>
+      <div class="stat-item"><div class="stat-value">Cloud</div><div class="stat-label">Dashboard</div></div>
+    </div>
+
+    <h3>🎯 The Problem</h3>
+    <p>Bar and entertainment venue owners struggle with:</p>
+    <ul>
+      <li><strong>Manual coin/cash collection</strong> - Time-consuming and prone to theft</li>
+      <li><strong>No real-time visibility</strong> - Owners can't monitor table usage remotely</li>
+      <li><strong>Revenue leakage</strong> - Staff may under-report games played</li>
+      <li><strong>No payment integration</strong> - Customers must carry cash</li>
+      <li><strong>Maintenance issues</strong> - No alerts when tables need service</li>
+    </ul>
+
+    <h3>💡 Our Solution</h3>
+    <p>Ardthon Solutions developed CuePay - a complete hardware + software solution:</p>
+    <ul>
+      <li><strong>ESP32-based controller</strong> with servo mechanism for automatic ball release</li>
+      <li><strong>GSM module</strong> for M-PESA payment detection via SMS parsing</li>
+      <li><strong>WiFi connectivity</strong> for cloud synchronization every 15 seconds</li>
+      <li><strong>16x2 LCD display</strong> showing games available, price, and battery status</li>
+      <li><strong>Cloud dashboard</strong> with real-time analytics, revenue reports, and remote commands</li>
+      <li><strong>Multi-device management</strong> - One dashboard for all tables across locations</li>
+    </ul>
+
+    <h3>🔧 Technologies Used</h3>
+    <div>
+      <span class="tech-tag">ESP32</span>
+      <span class="tech-tag">Arduino C++</span>
+      <span class="tech-tag">FreeRTOS</span>
+      <span class="tech-tag">GSM/SMS</span>
+      <span class="tech-tag">M-PESA API</span>
+      <span class="tech-tag">WiFi</span>
+      <span class="tech-tag">Node.js</span>
+      <span class="tech-tag">Express</span>
+      <span class="tech-tag">MySQL</span>
+      <span class="tech-tag">EJS</span>
+      <span class="tech-tag">Bootstrap 5</span>
+      <span class="tech-tag">REST API</span>
+      <span class="tech-tag">JSON</span>
+    </div>
+
+    <h3>✅ Key Benefits</h3>
+    <ul>
+      <li><strong>100% Cashless</strong> - Customers pay via M-PESA, funds go directly to owner</li>
+      <li><strong>Real-time Monitoring</strong> - View games, revenue, and battery from anywhere</li>
+      <li><strong>Fraud Prevention</strong> - Every transaction logged with unique IDs</li>
+      <li><strong>Revenue Analytics</strong> - Daily, weekly, monthly reports with peak hour detection</li>
+      <li><strong>Remote Control</strong> - Change game price, add games from your phone</li>
+      <li><strong>Low Maintenance</strong> - Battery monitoring and offline alerts</li>
+      <li><strong>Scalable</strong> - Manage 1 or 100 tables from one dashboard</li>
+    </ul>
+
+    <a href="/cuepay/login" class="btn" style="background:#00d4ff;color:#0a0a14;padding:12px 30px;border-radius:50px;font-weight:700;text-decoration:none;display:inline-block;margin-top:15px;">
+      <i class="fas fa-water me-2"></i> Access CuePay Dashboard
+    </a>
+  </div>
+
+  <!-- ==================== SMART TROLLEY PROJECT ==================== -->
+  <div class="project-card">
+    <span class="badge-field badge-iot">🛒 Smart Retail IoT</span>
+    <h2>Smart Trolley - RFID-Based Automated Shopping System</h2>
+      <div class="project-images" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin:20px 0;">
+        <img src="/images/projects/smarttrolley/trolley.jpg" alt="Smart Trolley" style="width:100%;border-radius:12px;border:1px solid var(--border);" onerror="this.style.display='none'">
+        <img src="/images/projects/smarttrolley/screen.jpg" alt="Trolley Screen" style="width:100%;border-radius:12px;border:1px solid var(--border);" onerror="this.style.display='none'">
+        <img src="/images/projects/smarttrolley/rfid.jpg" alt="RFID System" style="width:100%;border-radius:12px;border:1px solid var(--border);" onerror="this.style.display='none'">
+      </div>
+
+    <p>An intelligent shopping trolley system featuring RFID product scanning, automatic billing, M-PESA/card payment integration, loyalty program, and digital receipt generation - transforming the retail shopping experience.</p>
+
+    <div class="stat-grid">
+      <div class="stat-item"><div class="stat-value">Arduino</div><div class="stat-label">Mega 2560</div></div>
+      <div class="stat-item"><div class="stat-value">RFID</div><div class="stat-label">MFRC522</div></div>
+      <div class="stat-item"><div class="stat-value">TFT</div><div class="stat-label">3.5" Display</div></div>
+      <div class="stat-item"><div class="stat-value">GSM</div><div class="stat-label">SIM800L</div></div>
+    </div>
+
+    <h3>🎯 The Problem</h3>
+    <p>Traditional supermarket shopping faces these challenges:</p>
+    <ul>
+      <li><strong>Long checkout queues</strong> - Customers waste time waiting at tills</li>
+      <li><strong>Manual barcode scanning</strong> - Cashiers must scan each item individually</li>
+      <li><strong>Pricing confusion</strong> - Customers unsure of running total while shopping</li>
+      <li><strong>Loyalty management</strong> - Paper cards easily lost or forgotten</li>
+      <li><strong>Receipt management</strong> - Paper receipts are wasteful and easily lost</li>
+      <li><strong>Theft prevention</strong> - Items can be removed without scanning</li>
+    </ul>
+
+    <h3>💡 Our Solution</h3>
+    <p>Ardthon Solutions engineered the Smart Trolley - a complete in-trolley shopping system:</p>
+    <ul>
+      <li><strong>RFID-based product scanning</strong> - Items auto-detected when placed in trolley (MFRC522 reader)</li>
+      <li><strong>3.5" TFT touchscreen</strong> - Real-time cart display with quantity adjustment (MCUFRIEND_kbv)</li>
+      <li><strong>Automatic billing</strong> - Running subtotal, promotional discounts, and total calculation</li>
+      <li><strong>Multi-payment support</strong> - M-PESA via GSM, card payment via RFID, and cash options</li>
+      <li><strong>Loyalty program</strong> - RFID loyalty cards with points accumulation and redemption</li>
+      <li><strong>Digital receipts</strong> - SMS receipts sent directly to customer's phone via GSM</li>
+      <li><strong>Inventory database</strong> - 12 product categories stored in program memory (PROGMEM)</li>
+      <li><strong>Promotional engine</strong> - Automatic 10% discount on promotional items</li>
+      <li><strong>Battery monitoring</strong> - Real-time battery level display</li>
+    </ul>
+
+    <h3>🔧 Technologies Used</h3>
+    <div>
+      <span class="tech-tag">Arduino Mega 2560</span>
+      <span class="tech-tag">C/C++</span>
+      <span class="tech-tag">MFRC522 RFID</span>
+      <span class="tech-tag">MCUFRIEND_kbv TFT</span>
+      <span class="tech-tag">TouchScreen</span>
+      <span class="tech-tag">SIM800L GSM</span>
+      <span class="tech-tag">SPI Protocol</span>
+      <span class="tech-tag">PROGMEM</span>
+      <span class="tech-tag">Adafruit GFX</span>
+      <span class="tech-tag">M-PESA Integration</span>
+      <span class="tech-tag">Loyalty System</span>
+    </div>
+
+    <h3>📊 System Architecture</h3>
+    <p style="color:#ccccdd;">The Smart Trolley operates through a state machine architecture:</p>
+    <ul>
+      <li><strong>SPLASH → HOME → CART_VIEW → PAYMENT_METHOD</strong></li>
+      <li><strong>Payment flows:</strong> MPESA_WAIT (SMS confirmation) | CARD_PAYMENT (RFID tap) | CASH (instant)</li>
+      <li><strong>LOYALTY_SCAN</strong> - Points redemption before payment</li>
+      <li><strong>SUCCESS → RECEIPT</strong> - Digital receipt via SMS</li>
+      <li><strong>HELP & SETTINGS</strong> - Customer support screens</li>
+    </ul>
+
+    <h3>✅ Key Benefits</h3>
+    <ul>
+      <li><strong>Queue-Free Shopping</strong> - Pay at the trolley, skip checkout lines entirely</li>
+      <li><strong>Real-Time Cart View</strong> - See running total, adjust quantities, remove items</li>
+      <li><strong>Multiple Payment Options</strong> - M-PESA, card, or cash at the trolley</li>
+      <li><strong>Automatic Discounts</strong> - Promotional items get 10% off automatically</li>
+      <li><strong>Loyalty Rewards</strong> - Earn and redeem points with RFID loyalty cards</li>
+      <li><strong>Eco-Friendly</strong> - Digital receipts eliminate paper waste</li>
+      <li><strong>Anti-Theft</strong> - Items tracked from scan to payment</li>
+      <li><strong>Customer Independence</strong> - Self-service shopping experience</li>
+    </ul>
+
+    <h3>📱 User Interface</h3>
+    <p style="color:#ccccdd;">The 3.5" TFT touchscreen provides an intuitive interface:</p>
+    <ul>
+      <li><strong>Home Screen:</strong> Cart button, Pay button, Help, Settings, Clear Cart</li>
+      <li><strong>Cart View:</strong> Item list with + / - quantity and X remove buttons</li>
+      <li><strong>Payment Screen:</strong> M-PESA, Card, Cash, and Loyalty options</li>
+      <li><strong>M-PESA Wait:</strong> Animated waiting screen with SMS auto-detection</li>
+      <li><strong>Digital Receipt:</strong> Phone number input via on-screen keypad</li>
+      <li><strong>Success Screen:</strong> Animated confirmation with receipt option</li>
+    </ul>
+  </div>
+
+  <!-- ==================== REVIEW SECTION ==================== -->
+  <div class="review-section">
+    <h3><i class="fas fa-comments me-2"></i>Leave a Review</h3>
+    
+    <% if (typeof success_msg !== 'undefined' && success_msg && success_msg.length > 0) { %>
+      <div class="alert" style="background:rgba(16,185,129,0.2);color:#10b981;padding:15px;border-radius:10px;margin-bottom:20px;border:1px solid rgba(16,185,129,0.3);">
+        <i class="fas fa-check-circle me-2"></i><%= success_msg %>
+      </div>
+    <% } %>
+
+    <form class="review-form" action="/projects/review" method="POST">
+      <input type="text" name="name" placeholder="Your Name" required>
+      <input type="text" name="project" placeholder="Project Name (CuePay or Smart Trolley)" required>
+      <div style="margin-bottom:10px;">
+        <label style="color:#8888aa;margin-right:10px;">Rating:</label>
+        <select name="rating" style="background:#0a0a16;border:1px solid var(--border);color:#ffffff;padding:10px;border-radius:10px;">
+          <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
+          <option value="4">⭐⭐⭐⭐ Good</option>
+          <option value="3">⭐⭐⭐ Average</option>
+          <option value="2">⭐⭐ Poor</option>
+          <option value="1">⭐ Terrible</option>
+        </select>
+      </div>
+      <textarea name="comment" placeholder="Share your thoughts about this project..." rows="4" required></textarea>
+      <button type="submit" style="margin-top:15px;"><i class="fas fa-paper-plane me-2"></i>Submit Review</button>
+    </form>
+
+    <!-- Display Reviews -->
+    <h4 style="color:#ffffff;margin-top:30px;margin-bottom:15px;">Customer Reviews</h4>
+    <% if (typeof reviews !== 'undefined' && reviews && reviews.length > 0) { %>
+      <% reviews.forEach(function(review) { %>
+        <div class="review-card">
+          <div class="reviewer"><%= review.name %></div>
+          <div class="stars">
+            <% for (var i = 0; i < review.rating; i++) { %>⭐<% } %>
+          </div>
+          <div class="date"><%= new Date(review.created_at).toLocaleDateString() %> • <%= review.project %></div>
+          <div class="text"><%= review.comment %></div>
+        </div>
+      <% }) %>
+    <% } else { %>
+      <p style="color:var(--text-muted);">No reviews yet. Be the first to share your experience!</p>
+    <% } %>
+  </div>
+
+</div>
+
+<%- include('partials/footer') %>
+<%- include('partials/whatsapp') %>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<%- include('../layouts/main') %>
+<style>
+.admin-nav { background: #1a1a2e; border-bottom: 2px solid #00d4ff; padding: 15px 0; }
+.admin-nav a { color: #e0e0e0; text-decoration: none; margin: 0 15px; font-weight: 500; }
+.admin-nav a:hover, .admin-nav a.active { color: #00d4ff; }
+.stat-card { background: #1a1a2e; border: 1px solid #2a2a4a; border-radius: 15px; padding: 20px; text-align: center; }
+.stat-card h2 { color: #00d4ff; font-size: 2rem; }
+.stat-card p { color: #8888aa; }
+.device-table { width: 100%; border-collapse: collapse; }
+.device-table th { background: #1a1a2e; color: #00d4ff; padding: 12px; text-align: left; }
+.device-table td { padding: 10px 12px; border-bottom: 1px solid #2a2a4a; color: #ccc; }
+.device-table tr:hover { background: rgba(0,212,255,0.05); }
+.badge { padding: 4px 12px; border-radius: 15px; font-size: 0.75rem; }
+.btn-sm { padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; text-decoration: none; display: inline-block; }
+.btn-danger { background: #ef4444; color: white; }
+.btn-warning { background: #f59e0b; color: #000; }
+.btn-info { background: #00d4ff; color: #000; }
+</style>
+</head>
+<body style="background:#0f0f1a;">
+
+<nav class="admin-nav">
+  <div class="container">
+    <a href="/admin" class="active">📊 Dashboard</a>
+    <a href="/admin/users">👥 Users</a>
+    <a href="/admin/payments">💰 Payments</a>
+    <a href="/">🏠 Website</a>
+    <a href="/auth/logout" style="float:right;">🚪 Logout</a>
+  </div>
+</nav>
+
+<div class="container py-4">
+  <h1 style="color:#fff;">Admin Dashboard</h1>
+
+  <!-- Stats -->
+  <div class="row mb-4">
+    <div class="col-md-3"><div class="stat-card"><h2><%= stats.total_devices || 0 %></h2><p>Total Devices</p></div></div>
+    <div class="col-md-3"><div class="stat-card"><h2 style="color:#10b981;"><%= stats.online_devices || 0 %></h2><p>Online</p></div></div>
+    <div class="col-md-3"><div class="stat-card"><h2 style="color:#ef4444;"><%= stats.offline_devices || 0 %></h2><p>Offline</p></div></div>
+    <div class="col-md-3"><div class="stat-card"><h2>Ksh <%= stats.total_all_revenue || 0 %></h2><p>Total Revenue</p></div></div>
+  </div>
+
+  <!-- Devices Table -->
+  <div class="card" style="background:#1a1a2e;border:1px solid #2a2a4a;border-radius:15px;padding:20px;">
+    <h3 style="color:#fff;margin-bottom:15px;">All Devices</h3>
+    <div style="overflow-x:auto;">
+      <table class="device-table">
+        <thead>
+          <tr><th>Device ID</th><th>Name</th><th>Owner</th><th>Status</th><th>Games</th><th>Revenue</th><th>Battery</th><th>Last Sync</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+          <% devices.forEach(function(d) { %>
+            <tr>
+              <td style="font-family:monospace;font-size:0.8rem;"><%= d.device_id %></td>
+              <td><%= d.device_name %></td>
+              <td><%= d.owner_name || d.email || 'N/A' %></td>
+              <td><span class="badge" style="background:<%= d.status === 'online' ? '#10b981' : '#ef4444' %>;color:white;"><%= d.status %></span></td>
+              <td><%= d.games_available || 0 %></td>
+              <td>Ksh <%= d.total_revenue || 0 %></td>
+              <td><%= d.battery_voltage ? Math.round(((d.battery_voltage-10.5)/(12.6-10.5))*100) : 0 %>%</td>
+              <td style="font-size:0.75rem;"><%= d.last_sync ? new Date(d.last_sync).toLocaleString() : 'Never' %></td>
+              <td>
+                <a href="/admin/device/<%= d.device_id %>" class="btn-sm btn-info">View</a>
+                <form action="/admin/device/<%= d.device_id %>/delete" method="POST" style="display:inline;" onsubmit="return confirm('Delete this device?');">
+                  <button type="submit" class="btn-sm btn-danger">Delete</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

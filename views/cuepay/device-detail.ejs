@@ -1,0 +1,199 @@
+<%- include('../layouts/main') %>
+<style>
+.cuepay-nav { background: linear-gradient(135deg, #0ea5e9, #0284c7); padding: 15px 0; }
+.cuepay-nav a { color: white !important; text-decoration: none; }
+.stat-box {
+  background: white;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  text-align: center;
+}
+.stat-value { font-size: 2rem; font-weight: 800; }
+.stat-label { font-size: 0.85rem; color: #6b7280; }
+</style>
+</head>
+<body>
+<nav class="cuepay-nav">
+  <div class="container d-flex justify-content-between">
+    <a href="/cuepay/dashboard"><i class="fas fa-arrow-left me-2"></i> Back to Dashboard</a>
+    <button class="btn btn-light btn-sm rounded-pill" onclick="location.reload()"><i class="fas fa-sync-alt me-1"></i> Refresh</button>
+  </div>
+</nav>
+
+<div class="container py-4">
+  <% if (typeof success_msg !== 'undefined' && success_msg && success_msg.length > 0) { %>
+    <div class="alert alert-success"><%= success_msg %></div>
+  <% } %>
+
+  <div class="mb-4">
+    <h2><%= device.device_name %></h2>
+    <span class="badge bg-<%= device.status === 'online' ? 'success' : 'danger' %> me-2"><%= device.status %></span>
+    <small class="text-muted"><%= device.device_id %></small>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-2">
+      <div class="stat-box">
+        <div class="stat-value text-info"><%= device.games_available || 0 %></div>
+        <div class="stat-label">Games Left</div>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="stat-box">
+        <div class="stat-value text-success">Ksh <%= typeof todayStats !== 'undefined' && todayStats ? (todayStats.revenue || 0) : (device.today_revenue || 0) %></div>
+        <div class="stat-label">Today Revenue</div>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="stat-box">
+        <div class="stat-value text-primary"><%= typeof todayStats !== 'undefined' && todayStats ? (todayStats.games || 0) : (device.today_games || 0) %></div>
+        <div class="stat-label">Today Games</div>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="stat-box">
+        <div class="stat-value text-muted">Ksh <%= typeof yesterdayStats !== 'undefined' && yesterdayStats ? (yesterdayStats.revenue || 0) : 0 %></div>
+        <div class="stat-label">Yesterday Revenue</div>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="stat-box">
+        <div class="stat-value">Ksh <%= device.game_price %></div>
+        <div class="stat-label">Price/Game</div>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="stat-box">
+        <div class="stat-value text-warning"><%= device.battery_percent %>%</div>
+        <div class="stat-label">Battery</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-3">
+      <div class="stat-box">
+        <div class="stat-value text-success">Ksh <%= typeof weekStats !== 'undefined' && weekStats ? (weekStats.revenue || 0) : 0 %></div>
+        <div class="stat-label">This Week</div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="stat-box">
+        <div class="stat-value text-primary"><%= typeof weekStats !== 'undefined' && weekStats ? (weekStats.games || 0) : 0 %></div>
+        <div class="stat-label">Games This Week</div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="stat-box">
+        <div class="stat-value text-info">Ksh <%= typeof monthStats !== 'undefined' && monthStats ? (monthStats.revenue || 0) : 0 %></div>
+        <div class="stat-label">This Month</div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="stat-box">
+        <div class="stat-value">Ksh <%= device.total_revenue || 0 %></div>
+        <div class="stat-label">Total Revenue</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-4">
+      <div class="card rounded-4 shadow-sm">
+        <div class="card-header bg-white rounded-top-4"><h5 class="mb-0">Send Command</h5></div>
+        <div class="card-body">
+          <form action="/cuepay/device/<%= device.device_id %>/command" method="POST">
+            <div class="mb-3">
+              <label class="form-label">Command Type</label>
+               <select name="command_type" class="form-select" required>
+                 <option value="change_price">Change Game Price</option>
+                 <option value="add_games">Add Games</option>
+                 <option value="remove_games">Remove Games</option>
+                 <option value="restart">Restart Device</option>
+                 <option value="reset_today">Reset Today Stats</option>
+                 <option value="sync_now">Force Sync Now</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Value</label>
+              <input type="text" name="command_value" class="form-control" placeholder="e.g., 15.00 for price, 50 for games" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 rounded-pill" style="background:#0ea5e9;"><i class="fas fa-paper-plane me-2"></i> Send Command</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-8">
+      <div class="card rounded-4 shadow-sm">
+        <div class="card-header bg-white rounded-top-4">
+          <h5 class="mb-0">
+            Recent Payments 
+            <small class="text-muted">(<%= payments ? payments.length : 0 %> total)</small>
+          </h5>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover mb-0" style="font-size:0.9rem;">
+              <thead class="table-light"><tr><th>Transaction ID</th><th>Amount</th><th>Customer</th><th>Games</th><th>Time</th></tr></thead>
+              <tbody>
+                <% if (typeof payments !== 'undefined' && payments.length > 0) { %>
+                  <% payments.forEach(function(p) { 
+                    var payDate = new Date(p.payment_time);
+                    var today = new Date();
+                    var isToday = payDate.toDateString() === today.toDateString();
+                    var isYesterday = new Date(today.getTime() - 86400000).toDateString() === payDate.toDateString();
+                  %>
+                    <tr>
+                      <td style="font-family:monospace;font-size:0.8rem;"><%= p.transaction_id %></td>
+                      <td class="fw-bold">Ksh <%= p.amount %></td>
+                      <td><%= p.customer_number %></td>
+                      <td><%= p.games_earned %></td>
+                      <td style="font-size:0.8rem;">
+                        <%= payDate.toLocaleString() %>
+                        <% if (isToday) { %><span class="badge bg-success ms-1">Today</span><% } %>
+                        <% if (isYesterday) { %><span class="badge bg-warning ms-1">Yesterday</span><% } %>
+                      </td>
+                    </tr>
+                  <% }) %>
+                <% } else { %>
+                  <tr><td colspan="5" class="text-center py-3 text-muted">No payments received yet</td></tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// Sound alert on device detail page
+function playBeep(frequency = 800, duration = 0.15, volume = 0.3) {
+  try {
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    oscillator.frequency.value = frequency;
+    oscillator.type = 'sine';
+    gainNode.gain.value = volume;
+    oscillator.start();
+    gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration);
+    oscillator.stop(audioContext.currentTime + duration);
+  } catch(e) {}
+}
+
+// Play sound when page loads (if there are payments today)
+<% if (typeof todayStats !== 'undefined' && todayStats && todayStats.revenue > 0) { %>
+  setTimeout(() => {
+    playBeep(600, 0.1, 0.2);
+    setTimeout(() => playBeep(800, 0.15, 0.3), 150);
+  }, 1000);
+<% } %>
+</script>
+
+</body>
+</html>
