@@ -16,36 +16,86 @@
   max-width: 420px;
   width: 100%;
 }
+.ss-logo {
+  text-align: center;
+  margin-bottom: 20px;
+}
+.ss-logo i {
+  font-size: 4rem;
+  color: #10b981;
+}
+.ss-logo h3 {
+  font-weight: 800;
+  color: #0c4a6e;
+  margin: 10px 0 5px;
+}
+.ss-logo p {
+  color: #64748b;
+  margin: 0;
+}
+.btn-success-custom {
+  background: #10b981;
+  border: none;
+  color: white;
+  padding: 14px;
+  border-radius: 50px;
+  font-weight: 700;
+  width: 100%;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.btn-success-custom:hover {
+  background: #059669;
+  transform: translateY(-2px);
+}
 </style>
 </head>
 <body>
 <div class="ss-auth">
   <div class="ss-auth-card">
-    <div class="text-center mb-4">
-      <i class="fas fa-user-tie fa-4x" style="color:#10b981;"></i>
-      <h3 class="mt-2 fw-bold">Attendant Login</h3>
-      <p class="text-muted">SpinSpring Staff Access</p>
+    <div class="ss-logo">
+      <i class="fas fa-user-tie"></i>
+      <h3>Attendant Login</h3>
+      <p>SpinSpring Staff Access</p>
     </div>
+
     <% if (typeof error_msg !== 'undefined' && error_msg && error_msg.length > 0) { %>
-      <div class="alert alert-danger"><%= error_msg %></div>
+      <div class="alert alert-danger">
+        <i class="fas fa-exclamation-circle me-2"></i><%= error_msg %>
+      </div>
     <% } %>
-    <form action="/spinspg/attendant-login" method="POST">
+    <% if (typeof success_msg !== 'undefined' && success_msg && success_msg.length > 0) { %>
+      <div class="alert alert-success">
+        <i class="fas fa-check-circle me-2"></i><%= success_msg %>
+      </div>
+    <% } %>
+
+    <form action="/attendant-login" method="POST">
       <div class="mb-3">
-        <label class="form-label fw-bold">Email</label>
-        <input type="email" name="email" class="form-control" required>
+        <label class="form-label fw-bold">Email Address</label>
+        <input type="email" name="email" class="form-control" placeholder="attendant@email.com" required>
       </div>
       <div class="mb-3">
         <label class="form-label fw-bold">PIN Code</label>
-        <input type="password" name="pin_code" class="form-control" maxlength="6" required>
+        <input type="password" name="pin_code" class="form-control" placeholder="Enter 4-6 digit PIN" maxlength="6" required>
       </div>
-      <button type="submit" class="btn btn-success w-100 py-3 fw-bold rounded-pill">
+      <button type="submit" class="btn-success-custom">
         <i class="fas fa-sign-in-alt me-2"></i> Login
       </button>
     </form>
-    <div class="text-center mt-3">
-      <a href="/spinspg/login" class="text-muted">Owner Login</a>
+
+    <div class="text-center mt-4">
+      <a href="/login" class="text-muted" style="text-decoration:none;">
+        <i class="fas fa-store me-1"></i> Owner Login
+      </a>
+      <span class="text-muted mx-2">|</span>
+      <a href="/" class="text-muted" style="text-decoration:none;">
+        <i class="fas fa-home me-1"></i> Home
+      </a>
     </div>
   </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
