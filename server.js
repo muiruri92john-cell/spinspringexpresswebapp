@@ -10,9 +10,9 @@ const crypto = require('crypto');
 const mysql = require('mysql2/promise');
 const db = mysql.createPool({
   host: process.env.DB_HOST || '127.0.0.1',
-  user: process.env.DB_USER || 'yxmvmjxp_ardthonuser',
-  password: process.env.DB_PASSWORD || 'Ardthonuser254',
-  database: process.env.DB_NAME || 'yxmvmjxp_ardthonsolutions',
+  user: process.env.DB_USER || 'buxbtreu_spinspringuser',
+  password: process.env.DB_PASSWORD || 'spinspring@2026',
+  database: process.env.DB_NAME || 'buxbtreu_spinspringwebappdb',
   port: parseInt(process.env.DB_PORT) || 3306,
   waitForConnections: true,
   connectionLimit: 10,
