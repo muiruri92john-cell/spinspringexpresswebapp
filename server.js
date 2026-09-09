@@ -20,6 +20,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(session({ secret: 'spinspring_secure', resave: false, saveUninitialized: false }));
 app.use(flash());
+// At the top after middleware setup
+app.use('/', require('./routes/spinspring'));
 
 app.use((req, res, next) => {
   req.db = db;
