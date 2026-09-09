@@ -15,6 +15,21 @@ const db = mysql.createPool({
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+
+// ============ LEGACY PREFIX COMPAT (/spinspg/* -> /*) ============
+// Views and deployed links historically use /spinspg/* (sub-app mount).
+// This standalone domain serves canonical routes at /.
+// Strip a single leading /spinspg prefix so BOTH work:
+//   /login  <->  /spinspg/login
+//   /attendant-login  <->  /spinspg/attendant-login
+//   /customer-login   <->  /spinspg/customer-login
+// Placed before static + routes so pages AND static assets alias correctly.
+app.use((req, res, next) => {
+  if (req.url === '/spinspg' || req.url.startsWith('/spinspg/')) {
+    req.url = req.url.slice('/spinspg'.length) || '/';
+  }
+  next();
+});
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -122,6 +137,7 @@ app.post('/register-device', isOwner, async (req, res) => {
   try {
     const crypto = require('crypto');
     const { device_name, device_type, location, price_per_cycle } = req.body;
+    const userId = req.session.spinUser.id;
     const deviceId = 'SPIN-' + Date.now().toString(36).toUpperCase() + '-' + crypto.randomBytes(3).toString('hex').toUpperCase();
     const apiKey = 'SS-' + crypto.randomBytes(16).toString('hex');
     await db.query(
